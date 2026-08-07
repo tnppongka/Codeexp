@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a365d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ระบบจัดตารางเวร">
+  <title>ระบบจัดตารางเวร - ห้องยาสบปราบ</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a365d' rx='16' width='100' height='100'/><text y='.85em' x='50' text-anchor='middle' font-size='60'>📋</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    /* ===== CSS CUSTOM PROPERTIES ===== */
+    :root {
+      --primary: #1a365d;
+      --primary-light: #2c5282;
+      --primary-dark: #0f2440;
+      --accent: #d69e2e;
+      --accent-light: #ecc94b;
+      --bg: #f7fafc;
+      --surface: #ffffff;
+      --text: #1a202c;
+      --text-light: #718096;
+      --text-lighter: #a0aec0;
+      --border: #e2e8f0;
+      --success: #38a169;
+      --success-light: #c6f6d5;
+      --danger: #e53e3e;
+      --danger-light: #fed7d7;
+      --warning: #dd6b20;
+      --warning-light: #feebc8;
+      --info: #3182ce;
+      --info-light: #bee3f8;
+      --sidebar-width: 240px;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-xs: 4px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow: 0 4px 6px rgba(0,0,0,0.07);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+      --transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== LOGIN PAGE ===== */
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-page::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 70%, rgba(214,158,46,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 30%, rgba(44,82,130,0.15) 0%, transparent 40%);
+      animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-15px, -15px) rotate(3deg); }
+    }
+
+    .login-card {
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 44px 36px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-card .logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .login-card .logo-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .login-card .logo-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+
+    .login-card h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    .login-card .subtitle {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .login-form .form-group {
+      margin-bottom: 16px;
+    }
+
+    .login-form label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: var(--transition);
+      background: #fafbfc;
+    }
+
+    .login-form input:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(26,54,93,0.1);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 8px;
+    }
+
+    .btn-login:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .btn-login:active { transform: translateY(0); }
+
+    .login-error {
+      margin-top: 12px;
+      text-align: center;
+      color: var(--danger);
+      font-size: 13px;
+      min-height: 18px;
+    }
+
+    /* ===== APP LAYOUT ===== */
+    .app-layout {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .app-layout.active { display: flex; }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 20px 16px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .sidebar-header p {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 0;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 14px;
+      font-weight: 500;
+      border-left: 3px solid transparent;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
+
+    .nav-item.active {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border-left-color: var(--accent);
+    }
+
+    .nav-item .material-icons-round { font-size: 20px; }
+
+    .sidebar-footer {
+      padding: 12px 16px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .user-details { flex: 1; min-width: 0; }
+    .user-details .name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-details .role { font-size: 10px; opacity: 0.6; }
+
+    .btn-logout {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      padding: 4px;
+      transition: var(--transition);
+    }
+    .btn-logout:hover { color: var(--danger); }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-height: 100vh;
+      padding: 24px 28px;
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    /* ===== CALENDAR PAGE ===== */
+    .calendar-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .calendar-controls select {
+      padding: 8px 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 14px;
+      outline: none;
+      background: white;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .calendar-controls select:focus { border-color: var(--primary); }
+
+    .calendar-summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .summary-card {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .summary-card .num { font-size: 26px; font-weight: 700; color: var(--primary); }
+    .summary-card .label { font-size: 12px; color: var(--text-light); }
+    .summary-card.working .num { color: var(--success); }
+    .summary-card.weekend .num { color: var(--warning); }
+    .summary-card.holiday .num { color: var(--danger); }
+
+    .calendar-grid {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .calendar-header-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background: var(--primary);
+      color: white;
+    }
+
+    .calendar-header-row .day-name {
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .calendar-header-row .day-name.holiday-col { background: rgba(229,62,62,0.25); }
+
+    .calendar-body {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .calendar-cell {
+      min-height: 85px;
+      background: white;
+      padding: 6px 8px;
+      position: relative;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .calendar-cell:hover:not(.empty):not(.disabled) { background: #f0f7ff; }
+
+    .calendar-cell.empty { background: #f8f9fa; cursor: default; }
+    .calendar-cell.weekend { background: #fef2f2; }
+    .calendar-cell.holiday { background: #fff7ed; }
+    .calendar-cell.booked { background: #f0fdf4; }
+
+    .calendar-cell .day-number {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .calendar-cell.weekend .day-number { color: var(--danger); }
+    .calendar-cell.holiday .day-number { color: var(--warning); }
+
+    .calendar-cell .holiday-name {
+      font-size: 10px;
+      color: var(--warning);
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+
+    .calendar-cell .booking-info {
+      font-size: 10px;
+      color: var(--success);
+      font-weight: 600;
+      line-height: 1.2;
+      margin-top: 3px;
+      padding: 2px 6px;
+      background: rgba(56,161,105,0.1);
+      border-radius: var(--radius-xs);
+    }
+
+    .calendar-cell .booking-info.booked-by-other {
+      color: var(--text-light);
+      background: rgba(113,128,150,0.1);
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-light); }
+    .btn-secondary { background: #edf2f7; color: var(--text); }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #c53030; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #2f855a; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* ===== FORMS ===== */
+    .form-group { margin-bottom: 14px; }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="password"],
+    .form-group input[type="number"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+      background: #fafbfc;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(26,54,93,0.08);
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius);
+      padding: 28px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-lg);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-content h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ===== SETTINGS / TABS ===== */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-light);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ===== DATA TABLE ===== */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .data-table th {
+      background: var(--primary);
+      color: white;
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .data-table tr:hover td { background: #f8fafc; }
+
+    .table-actions { display: flex; gap: 6px; }
+
+    /* ===== REPORT PAGE ===== */
+    .report-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .report-content {
+      background: white;
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .report-content h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .report-content .report-subtitle {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    /* ===== ANALYSIS CARD ===== */
+    .analysis-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .analysis-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      body { background: white; }
+      .sidebar, .calendar-controls, .btn-print, .tabs, .report-selector,
+      .nav-item, .sidebar-footer, .sidebar-header, .btn, .mobile-header,
+      .toast, .modal-overlay, .page-header { display: none !important; }
+      .main-content { margin-left: 0 !important; padding: 0 !important; }
+      .calendar-cell { min-height: 50px; font-size: 11px; }
+      .data-table th { background: #1a365d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      @page { size: A4; margin: 15mm; }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    .mobile-header { display: none; }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); z-index: 200; }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; padding: 16px; }
+      .mobile-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: var(--primary);
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .mobile-header .title { font-size: 16px; font-weight: 700; }
+      .menu-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+      .calendar-cell { min-height: 55px; }
+      .calendar-cell .day-number { font-size: 12px; }
+      .calendar-cell .booking-info { font-size: 8px; }
+      .summary-card { padding: 10px 14px; }
+      .summary-card .num { font-size: 22px; }
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      z-index: 2000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: var(--transition);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { background: var(--danger); }
+    .toast.success { background: var(--success); }
+
+    /* ===== LOADING & EMPTY ===== */
+    .loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-light); }
+    .spinner {
+      width: 24px; height: 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+    .empty-state .material-icons-round { font-size: 48px; opacity: 0.4; margin-bottom: 12px; }
+
+    /* ===== SIDEBAR OVERLAY (mobile) ===== */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 150;
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* ===== CHIPS / TAGS ===== */
+    .chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .chip-normal { background: #ebf8ff; color: var(--info); }
+    .chip-weekend { background: #fff5f5; color: var(--danger); }
+    .chip-holiday { background: #fffaf0; color: var(--warning); }
+    .chip-doc { background: #f0fff4; color: var(--success); }
+
+    /* ===== SWITCH ===== */
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #cbd5e0;
+      transition: var(--transition);
+      border-radius: 24px;
+    }
+    .switch .slider::before {
+      content: '';
+      position: absolute;
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background: white;
+      transition: var(--transition);
+      border-radius: 50%;
+    }
+    .switch input:checked + .slider { background: var(--success); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== LOGIN PAGE ===== -->
+  <div class="login-page" id="loginPage">
+    <div class="login-card">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        </div>
+        <h1>ระบบจัดตารางเวร</h1>
+        <p class="subtitle">ห้องยาสบปราบ</p>
+      </div>
+      <form class="login-form" id="loginForm">
+        <div class="form-group">
+          <label>ชื่อ-นามสกุล</label>
+          <input type="text" id="loginName" placeholder="กรอกชื่อ-นามสกุล" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>รหัสผ่าน</label>
+          <input type="password" id="loginPassword" placeholder="กรอกรหัสผ่าน">
+        </div>
+        <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
+        <div class="login-error" id="loginError"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== APP LAYOUT ===== -->
+  <div class="app-layout" id="appLayout">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h3>📋 ระบบจัดตารางเวร</h3>
+        <p>ห้องยาสบปราบ</p>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item active" data-page="booking" onclick="navigateTo('booking')">
+          <span class="material-icons-round">event</span> ฉันจะจองเวร
+        </div>
+        <div class="nav-item" data-page="settings" onclick="navigateTo('settings')">
+          <span class="material-icons-round">settings</span> ตั้งค่าข้อมูล
+        </div>
+        <div class="nav-item" data-page="reports" onclick="navigateTo('reports')">
+          <span class="material-icons-round">assessment</span> รายงาน
+        </div>
+        <div class="nav-item" data-page="analysis" onclick="navigateTo('analysis')">
+          <span class="material-icons-round">analytics</span> วิเคราะห์ข้อมูล
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div class="user-details">
+          <div class="name" id="userName">Admin</div>
+          <div class="role" id="userRole">ผู้ดูแลระบบ</div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="ออกจากระบบ">
+          <span class="material-icons-round" style="font-size:20px;">logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content" id="mainContent">
+      <!-- Dynamic content -->
+    </main>
+  </div>
+
+  <!-- MOBILE HEADER -->
+  <div class="mobile-header" id="mobileHeader">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <span class="material-icons-round">menu</span>
+    </button>
+    <span class="title">ระบบจัดตารางเวร</span>
+    <button class="btn-logout" onclick="logout()" style="color:white;">
+      <span class="material-icons-round" style="font-size:20px;">logout</span>
+    </button>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="bookingModal">
+    <div class="modal-content" id="bookingModalContent"></div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+  // ============ STATE ============
+  let currentUser = null;
+  let currentPage = 'booking';
+  let currentYear = new Date().getFullYear() + 543;
+  let currentMonth = new Date().getMonth() + 1;
+
+  // ============ API CALL ============
+  function gasCall(fn, args) {
+    return new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)[fn](...args);
+    });
+  }
+
+  // ============ TOAST ============
+  function showToast(msg, type) {
+    type = type || 'success';
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    setTimeout(function() { t.classList.add('show'); }, 10);
+    setTimeout(function() { t.classList.remove('show'); }, 3000);
+  }
+
+  // ============ LOGIN ============
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var name = document.getElementById('loginName').value.trim();
+    var password = document.getElementById('loginPassword').value.trim();
+
+    if (!name || !password) {
+      document.getElementById('loginError').textContent = 'กรุณากรอกข้อมูลให้ครบ';
+      return;
+    }
+
+    gasCall('apiLogin', [name, password]).then(function(result) {
+      if (result.success) {
+        currentUser = result.user;
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('appLayout').classList.add('active');
+        document.getElementById('userName').textContent = currentUser.fullname;
+        document.getElementById('userRole').textContent = currentUser.is_admin ? 'ผู้ดูแลระบบ' : 'ผู้ใช้';
+        document.getElementById('userAvatar').textContent = currentUser.fullname.charAt(0);
+        navigateTo('booking');
+      } else {
+        document.getElementById('loginError').textContent = result.message;
+      }
+    }).catch(function(err) {
+      document.getElementById('loginError').textContent = 'เกิดข้อผิดพลาด: ' + err.message;
+    });
+  });
+
+  function logout() {
+    currentUser = null;
+    document.getElementById('appLayout').classList.remove('active');
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('loginForm').reset();
+    document.getElementById('loginError').textContent = '';
+  }
+
+  // ============ NAVIGATION ============
+  function navigateTo(page) {
+    currentPage = page;
+    document.querySelectorAll('.nav-item').forEach(function(el) {
+      el.classList.toggle('active', el.getAttribute('data-page') === page);
+    });
+    var main = document.getElementById('mainContent');
+    main.innerHTML = '<div class="loading"><div class="spinner"></div> กำลังโหลด...</div>';
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+
+    switch(page) {
+      case 'booking': renderBookingPage(); break;
+      case 'settings': renderSettingsPage(); break;
+      case 'reports': renderReportsPage(); break;
+      case 'analysis': renderAnalysisPage(); break;
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+  }
+
+  // ============ MONTH / YEAR HELPERS ============
+  var MONTH_NAMES = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+    'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  var MONTH_SHORT = ['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  var DAY_NAMES = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+
+  function formatDateThaiStr(dateVal) {
+    if (!dateVal) return '-';
+    var d = new Date(dateVal);
+    if (isNaN(d)) return String(dateVal);
+    return d.getDate() + ' ' + MONTH_SHORT[d.getMonth() + 1] + ' พ.ศ. ' + (d.getFullYear() + 543);
+  }
+
+  function formatDateNumericStr(dateVal) {
+    if (!dateVal) return '-';
+    var d = new Date(dateVal);
+    if (isNaN(d)) return String(dateVal);
+    var dd = String(d.getDate()).padStart(2,'0');
+    var mm = String(d.getMonth() + 1).padStart(2,'0');
+    return dd + '/' + mm + '/' + (d.getFullYear() + 543);
+  }
+
+  function getShiftLabel(shiftId) {
+    var map = {
+      'SHIFT_NORMAL': 'เวรวันปกติ',
+      'SHIFT_WEEKEND': 'เวรเสาร์-อาทิตย์/นักขัตฤกษ์',
+      'SHIFT_DOC_NORMAL': 'เวรเอกสาร (วันปกติ)',
+      'SHIFT_DOC_WEEKEND': 'เวรเอกสาร (วันหยุด)'
+    };
+    return map[shiftId] || shiftId;
+  }
+
+  function getShiftTypeLabel(shiftType) {
+    var map = { 'วันปกติ': 'เวรวันปกติ', 'วันหยุด': 'เวรวันหยุด', 'เวรเอกสาร': 'เวรเอกสาร' };
+    return map[shiftType] || shiftType;
+  }
+
+  // ============ BOOKING PAGE ============
+  function renderBookingPage() {
+    var main = document.getElementById('mainContent');
+    gasCall('apiGetCalendar', [String(currentYear), String(currentMonth)]).then(function(cal) {
+      var html = '<div class="page-header"><h2>ฉันจะจองเวร</h2><p>เลือกเดือน/ปี เพื่อดูปฏิทินและจองเวร</p></div>';
+
+      // Controls
+      html += '<div class="calendar-controls">';
+      html += '<select id="selMonth" onchange="changeCalendar()">';
+      for (var i = 0; i <= 12; i++) {
+        html += '<option value="' + i + '"' + (i === currentMonth ? ' selected' : '') + '>' + MONTH_NAMES[i] + '</option>';
+      }
+      html += '</select>';
+
+      html += '<select id="selYear" onchange="changeCalendar()">';
+      var years = [2567,2568,2569,2570,2571];
+      for (var yi = 0; yi < years.length; yi++) {
+        html += '<option value="' + years[yi] + '"' + (years[yi] === currentYear ? ' selected' : '') + '>พ.ศ. ' + years[yi] + '</option>';
+      }
+      html += '</select>';
+
+      html += '<button class="btn btn-secondary" onclick="printCalendar()" style="margin-left:auto;">';
+      html += '<span class="material-icons-round" style="font-size:18px;vertical-align:middle;">print</span> พิมพ์ปฏิทิน</button>';
+      html += '</div>';
+
+      // Summary cards
+      html += '<div class="calendar-summary">';
+      html += '<div class="summary-card working"><div><div class="num">' + cal.workingDays + '</div><div class="label">วันทำการ</div></div></div>';
+      html += '<div class="summary-card weekend"><div><div class="num">' + cal.weekendDays + '</div><div class="label">วันหยุด ส-อา</div></div></div>';
+      html += '<div class="summary-card holiday"><div><div class="num">' + cal.holidayDays + '</div><div class="label">วันนักขัตฤกษ์</div></div></div>';
+      html += '</div>';
+
+      // Calendar grid
+      html += '<div class="calendar-grid" id="printableCalendar">';
+      html += '<div class="calendar-header-row">';
+      for (var di = 0; di < 7; di++) {
+        html += '<div class="day-name' + (di === 0 || di === 6 ? ' holiday-col' : '') + '">' + DAY_NAMES[di] + '</div>';
+      }
+      html += '</div><div class="calendar-body">';
+
+      for (var ci = 0; ci < cal.days.length; ci++) {
+        var day = cal.days[ci];
+        if (!day) {
+          html += '<div class="calendar-cell empty"></div>';
+        } else {
+          var classes = 'calendar-cell';
+          if (day.isWeekend) classes += ' weekend';
+          if (day.isHoliday && !day.isWeekend) classes += ' holiday';
+          if (day.isBooked) classes += ' booked';
+
+          html += '<div class="' + classes + '" onclick="handleDayClick(\'' + day.date + '\',' + day.isBooked + ')">';
+          html += '<div class="day-number">' + day.day + '</div>';
+          if (day.holidayName) html += '<div class="holiday-name">' + day.holidayName + '</div>';
+          if (day.booking) {
+            var isOwn = String(day.booking.user_id) === String(currentUser.user_id);
+            html += '<div class="booking-info ' + (isOwn ? '' : 'booked-by-other') + '">';
+            html += (isOwn ? '✅ ' : '') + day.booking.booked_by + ' จอง</div>';
+          }
+          html += '</div>';
+        }
+      }
+
+      html += '</div></div>';
+      main.innerHTML = html;
+    }).catch(function(err) {
+      main.innerHTML = '<div class="empty-state"><span class="material-icons-round">error</span><p>เกิดข้อผิดพลาด: ' + err.message + '</p></div>';
+    });
+  }
+
+  function changeCalendar() {
+    var m = document.getElementById('selMonth');
+    var y = document.getElementById('selYear');
+    if (m && y) {
+      currentMonth = parseInt(m.value) || 1;
+      currentYear = parseInt(y.value) || 2568;
+    }
+    renderBookingPage();
+  }
+
+  function handleDayClick(date, isBooked) {
+    if (isBooked) {
+      // Show existing booking info
+      gasCall('apiGetCalendar', [String(currentYear), String(currentMonth)]).then(function(cal) {
+        var day = null;
+        for (var i = 0; i < cal.days.length; i++) {
+          if (cal.days[i] && cal.days[i].date === date) { day = cal.days[i]; break; }
+        }
+        if (!day || !day.booking) return;
+
+        var d = new Date(date);
+        var dateThai = d.getDate() + ' ' + MONTH_SHORT[d.getMonth() + 1] + ' พ.ศ. ' + (d.getFullYear() + 543);
+
+        var html = '<p style="margin-bottom:16px;color:var(--text-light);font-size:14px;">วันที่ ' + dateThai + '</p>';
+        html += '<div style="background:var(--bg);padding:16px;border-radius:var(--radius-sm);margin-bottom:16px;">';
+        html += '<p style="margin-bottom:6px;"><strong>ผู้จอง:</strong> ' + day.booking.booked_by + '</p>';
+        html += '<p style="margin-bottom:6px;"><strong>ประเภทเวร:</strong> ' + getShiftLabel(day.booking.shift_type) + '</p>';
+        html += '</div>';
+
+        if (currentUser.is_admin) {
+          html += '<div style="display:flex;gap:8px;justify-content:flex-end;">';
+          html += '<button class="btn btn-danger btn-sm" onclick="deleteBooking(\'' + day.booking.booking_id + '\')">ยกเลิกการจอง</button>';
+          html += '<button class="btn btn-secondary btn-sm" onclick="closeModal()">ปิด</button>';
+          html += '</div>';
+        } else {
+          html += '<div style="text-align:right;"><button class="btn btn-secondary btn-sm" onclick="closeModal()">ปิด</button></div>';
+        }
+
+        document.getElementById('bookingModalContent').innerHTML = html;
+        document.getElementById('bookingModal').classList.add('active');
+      });
+      return;
+    }
+
+    // Show booking form
+    gasCall('apiCheckBooking', [date]).then(function(check) {
+      if (check.booked) {
+        showToast('วันที่นี้มีผู้จองแล้ว', 'error');
+        return;
+      }
+
+      var d = new Date(date);
+      var dateThai = d.getDate() + ' ' + MONTH_SHORT[d.getMonth() + 1] + ' พ.ศ. ' + (d.getFullYear() + 543);
+      var dayOfWeek = d.getDay();
+      var isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      gasCall('apiGetShifts', []).then(function(shifts) {
+        // Filter shifts based on day type
+        var availableShifts;
+        if (isWeekend) {
+          availableShifts = shifts.filter(function(s) {
+            return s.shift_type === 'วันหยุด' || s.shift_type === 'เวรเอกสาร';
+          });
+        } else {
+          availableShifts = shifts.filter(function(s) {
+            return s.shift_type === 'วันปกติ' || s.shift_type === 'เวรเอกสาร';
+          });
+        }
+
+        var html = '<p style="margin-bottom:16px;color:var(--text-light);font-size:14px;">วันที่ ' + dateThai + '</p>';
+        html += '<div class="form-group"><label>เลือกประเภทเวร</label><select id="selShiftType">';
+        for (var si = 0; si < availableShifts.length; si++) {
+          var s = availableShifts[si];
+          html += '<option value="' + s.shift_id + '">' + s.shift_name + ' (' + s.hours + ' ชม. ' + s.time_start + '-' + s.time_end + ')</option>';
+        }
+        html += '</select></div>';
+
+        html += '<div class="form-group"><label>ผู้อยู่เวร</label><select id="selUser">';
+        html += '<option value="' + currentUser.user_id + '">' + currentUser.fullname + '</option>';
+        html += '</select></div>';
+
+        html += '<div class="form-group"><label>หมายเหตุ (ไม่บังคับ)</label>';
+        html += '<input type="text" id="bookingNotes" placeholder="หมายเหตุ (ถ้ามี)"></div>';
+
+        html += '<div class="modal-actions">';
+        html += '<button class="btn btn-primary" onclick="confirmBooking(\'' + date + '\')">ยืนยันจอง</button>';
+        html += '<button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>';
+        html += '</div>';
+
+        document.getElementById('bookingModalContent').innerHTML = html;
+
+        // Load all users for admin
+        if (currentUser.is_admin) {
+          gasCall('apiGetUsers', []).then(function(users) {
+            var sel = document.getElementById('selUser');
+            if (sel) {
+              sel.innerHTML = users.map(function(u) {
+                return '<option value="' + u.user_id + '"' + (String(u.user_id) === String(currentUser.user_id) ? ' selected' : '') + '>' + u.fullname + '</option>';
+              }).join('');
+            }
+          });
+        }
+
+        document.getElementById('bookingModal').classList.add('active');
+      });
+    }).catch(function(err) {
+      showToast('เกิดข้อผิดพลาด: ' + err.message, 'error');
+    });
+  }
+
+  function confirmBooking(date) {
+    var shiftType = document.getElementById('selShiftType').value;
+    var userId = document.getElementById('selUser').value;
+    var notes = document.getElementById('bookingNotes').value;
+
+    // Find user name
+    var bookingData = {
+      duty_date: date,
+      shift_type: shiftType,
+      user_id: userId,
+      booked_by: currentUser.fullname,
+      notes: notes
+    };
+
+    gasCall('apiBookDuty', [bookingData]).then(function(result) {
+      closeModal();
+      if (result.success) {
+        showToast('จองเวรเรียบร้อยแล้ว', 'success');
+        renderBookingPage();
+      } else {
+        showToast(result.message, 'error');
+      }
+    }).catch(function(err) {
+      showToast('เกิดข้อผิดพลาด: ' + err.message, 'error');
+    });
+  }
+
+  function deleteBooking(bookingId) {
+    if (confirm('ต้องการยกเลิกการจองนี้?')) {
+      gasCall('apiDeleteBooking', [bookingId]).then(function() {
+        closeModal();
+        showToast('ยกเลิกการจองแล้ว', 'success');
+        renderBookingPage();
+      });
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('bookingModal').classList.remove('active');
+  }
+
+  function printCalendar() {
+    window.print();
+  }
+
+  // ============ SETTINGS PAGE ============
+  function renderSettingsPage() {
+    if (!currentUser.is_admin) {
+      document.getElementById('mainContent').innerHTML =
+        '<div class="page-header"><h2>ตั้งค่าข้อมูล</h2></div>' +
+        '<div class="empty-state"><span class="material-icons-round">lock</span><p>เฉพาะผู้ดูแลระบบเท่านั้นที่เข้าถึงหน้านี้ได้</p></div>';
+      return;
+    }
+
+    var html = '<div class="page-header"><h2>ตั้งค่าข้อมูล</h2><p>จัดการข้อมูลบุคลากร ประเภทเวร และการแจ้งเตือน</p></div>';
+    html += '<div class="tabs" id="settingsTabs">';
+    html += '<div class="tab active" onclick="switchSettingsTab(\'tab-users\',this)">บุคลากร</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-shifts\',this)">ประเภทเวร</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-notif\',this)">การแจ้งเตือน</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-holidays\',this)">วันหยุด</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-settings\',this)">ตั้งค่าระบบ</div>';
+    html += '</div>';
+    html += '<div id="tab-users" class="tab-content active"></div>';
+    html += '<div id="tab-shifts" class="tab-content"></div>';
+    html += '<div id="tab-notif" class="tab-content"></div>';
+    html += '<div id="tab-holidays" class="tab-content"></div>';
+    html += '<div id="tab-settings" class="tab-content"></div>';
+
+    document.getElementById('mainContent').innerHTML = html;
+    renderUsersTab();
+    renderShiftsTab();
+    renderNotifTab();
+    renderHolidaysTab();
+    renderSettingsTab();
+  }
+
+  function switchSettingsTab(tabId, el) {
+    document.querySelectorAll('#settingsTabs .tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    if (el) el.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  // --- Users Tab ---
+  function renderUsersTab() {
+    gasCall('apiGetUsers', []).then(function(users) {
+      var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+      html += '<h3 style="font-size:16px;font-weight:600;color:var(--primary);">รายชื่อบุคลากร</h3>';
+      html += '<button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ เพิ่มบุคลากร</button>';
+      html += '</div>';
+
+      html += '<table class="data-table"><thead><tr>';
+      html += '<th>ชื่อ-นามสกุล</th><th>ตำแหน่ง</th><th>อัตรา/ชม.</th><th>สิทธิ์</th><th>จัดการ</th>';
+      html += '</tr></thead><tbody>';
+
+      for (var i = 0; i < users.length; i++) {
+        var u = users[i];
+        html += '<tr>';
+        html += '<td>' + u.fullname + '</td>';
+        html += '<td>' + (u.position || '-') + '</td>';
+        html += '<td>' + (u.rate_per_hour || 0) + '</td>';
+        html += '<td><span class="chip ' + (u.is_admin ? 'chip-normal' : 'chip-doc') + '">' + (u.is_admin ? 'Admin' : 'User') + '</span></td>';
+        html += '<td><div class="table-actions">';
+        html += '<button class="btn btn-secondary btn-sm" onclick="showEditUserModal(\'' + u.user_id + '\')">แก้ไข</button>';
+        if (String(u.user_id) !== 'USR_001') {
+          html += '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + u.user_id + '\')">ลบ</button>';
+        }
+        html += '</div></td></tr>';
+      }
+
+      html += '</tbody></table>';
+      document.getElementById('tab-users').innerHTML = html;
+    });
+  }
+
+  function showAddUserModal() {
+    var html = '<h3>เพิ่มบุคลากรใหม่</h3>';
+    html += '<div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="newFullname" placeholder="กรอกชื่อ-นามสกุล"></div>';
+    html += '<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="newPosition" placeholder="กรอกตำแหน่ง"></div>';
+    html += '<div class="form-group"><label>อัตราค่าจ้าง/ชั่วโมง</label><input type="number" id="newRate" placeholder="0.00" step="0.01" min="0"></div>';
+    html += '<div class="form-group"><label>LINE User ID</label><input type="text" id="newLineId" placeholder="Uxxxx..."></div>';
+    html += '<div class="form-group"><label>รหัสผ่าน</label><input type="text" id="newPassword" placeholder="ตั้งรหัสผ่าน"></div>';
+    html += '<div class="form-group"><label><input type="checkbox" id="newIsAdmin"> เป็น Admin</label></div>';
+    html += '<div class="modal-actions">';
+    html += '<button class="btn btn-primary" onclick="addUser()">บันทึก</button>';
+    html += '<button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>';
+    html += '</div>';
+    document.getElementById('bookingModalContent').innerHTML = html;
+    document.getElementById('bookingModal').classList.add('active');
+  }
+
+  function addUser() {
+    var data = {
+      fullname: document.getElementById('newFullname').value.trim(),
+      position: document.getElementById('newPosition').value.trim(),
+      rate_per_hour: parseFloat(document.getElementById('newRate').value) || 0,
+      line_user_id: document.getElementById('newLineId').value.trim(),
+      password: document.getElementById('newPassword').value.trim(),
+      is_admin: document.getElementById('newIsAdmin').checked
+    };
+
+    if (!data.fullname || !data.password) {
+      showToast('กรุณากรอกชื่อและรหัสผ่าน', 'error');
+      return;
+    }
+
+    gasCall('apiAddUser', [data]).then(function(result) {
+      closeModal();
+      if (result.success) {
+        showToast('เพิ่มบุคลากรแล้ว', 'success');
+        renderUsersTab();
+      } else {
+        showToast(result.message, 'error');
+      }
+    });
+  }
+
+  function deleteUser(userId) {
+    if (confirm('ต้องการลบผู้ใช้นี้? ข้อมูลการจองที่เกี่ยวข้องจะถูกลบด้วย')) {
+      gasCall('apiDeleteUser', [userId]).then(function(result) {
+        if (result.success) {
+          showToast('ลบแล้ว', 'success');
+          renderUsersTab();
+        } else {
+          showToast(result.message, 'error');
+        }
+      });
+    }
+  }
+
+  function showEditUserModal(userId) {
+    gasCall('apiGetUsers', []).then(function(users) {
+      var user = null;
+      for (var i = 0; i < users.length; i++) {
+        if (String(users[i].user_id) === String(userId)) { user = users[i]; break; }
+      }
+      if (!user) return;
+
+      var html = '<h3>แก้ไขข้อมูลบุคลากร</h3>';
+      html += '<div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="editFullname" value="' + user.fullname + '"></div>';
+      html += '<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="editPosition" value="' + (user.position || '') + '"></div>';
+      html += '<div class="form-group"><label>อัตราค่าจ้าง/ชั่วโมง</label><input type="number" id="editRate" value="' + (user.rate_per_hour || 0) + '" step="0.01" min="0"></div>';
+      html += '<div class="form-group"><label>LINE User ID</label><input type="text" id="editLineId" value="' + (user.line_user_id || '') + '"></div>';
+      html += '<div class="form-group"><label>รหัสผ่าน</label><input type="text" id="editPassword" value="' + user.password + '"></div>';
+      html += '<div class="form-group"><label><input type="checkbox" id="editIsAdmin" ' + (user.is_admin ? 'checked' : '') + '> เป็น Admin</label></div>';
+      html += '<div class="modal-actions">';
+      html += '<button class="btn btn-primary" onclick="saveEditUser(\'' + userId + '\')">บันทึก</button>';
+      html += '<button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>';
+      html += '</div>';
+
+      document.getElementById('bookingModalContent').innerHTML = html;
+      document.getElementById('bookingModal').classList.add('active');
+    });
+  }
+
+  function saveEditUser(userId) {
+    var data = {
+      fullname: document.getElementById('editFullname').value.trim(),
+      position: document.getElementById('editPosition').value.trim(),
+      rate_per_hour: parseFloat(document.getElementById('editRate').value) || 0,
+      line_user_id: document.getElementById('editLineId').value.trim(),
+      password: document.getElementById('editPassword').value.trim(),
+      is_admin: document.getElementById('editIsAdmin').checked
+    };
+
+    gasCall('apiUpdateUser', [userId, data]).then(function(result) {
+      closeModal();
+      if (result.success) {
+        showToast('บันทึกแล้ว', 'success');
+        renderUsersTab();
+      } else {
+        showToast(result.message, 'error');
+      }
+    });
+  }
+
+  // --- Shifts Tab ---
+  function renderShiftsTab() {
+    gasCall('apiGetShifts', []).then(function(shifts) {
+      var html = '<h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:16px;">ประเภทเวร</h3>';
+      html += '<table class="data-table"><thead><tr>';
+      html += '<th>ชื่อ</th><th>กลุ่ม</th><th>ชั่วโมง</th><th>เวลา</th><th>อัตราคูณ</th><th>แจ้งเตือน</th>';
+      html += '</tr></thead><tbody>';
+
+      for (var i = 0; i < shifts.length; i++) {
+        var s = shifts[i];
+        html += '<tr>';
+        html += '<td>' + s.shift_name + '</td>';
+        html += '<td><span class="chip ' + (s.shift_type === 'วันปกติ' ? 'chip-normal' : s.shift_type === 'วันหยุด' ? 'chip-weekend' : 'chip-doc') + '">' + s.shift_type + '</span></td>';
+        html += '<td>' + s.hours + ' ชม.</td>';
+        html += '<td>' + s.time_start + ' - ' + s.time_end + '</td>';
+        html += '<td>' + s.rate_multiplier + 'x</td>';
+        html += '<td><label class="switch"><input type="checkbox" ' + (s.notify_enabled ? 'checked' : '') + ' onchange="toggleShiftNotify(\'' + s.shift_id + '\',this.checked)"><span class="slider"></span></label></td>';
+        html += '</tr>';
+      }
+
+      html += '</tbody></table>';
+      document.getElementById('tab-shifts').innerHTML = html;
+    });
+  }
+
+  function toggleShiftNotify(shiftId, enabled) {
+    gasCall('apiUpdateShift', [shiftId, { shift_id: shiftId, notify_enabled: enabled }]).then(function() {
+      showToast('บันทึกแล้ว', 'success');
+    });
+  }
+
+  // --- Notifications Tab ---
+  function renderNotifTab() {
+    gasCall('apiGetUsers', []).then(function(users) {
+      gasCall('apiGetShifts', []).then(function(shifts) {
+        gasCall('apiGetNotifications', []).then(function(notifs) {
+          var html = '<h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:8px;">ตั้งค่าการแจ้งเตือน LINE</h3>';
+          html += '<p style="color:var(--text-light);margin-bottom:16px;font-size:13px;">เลือกผู้ใช้และประเภทเวรที่ต้องการให้ส่งแจ้งเตือนไปยัง LINE OA</p>';
+
+          html += '<table class="data-table"><thead><tr>';
+          html += '<th>บุคลากร</th><th>ประเภทเวร</th><th>เปิด/ปิด</th>';
+          html += '</tr></thead><tbody>';
+
+          var nonAdminUsers = users.filter(function(u) { return String(u.user_id) !== 'USR_001'; });
+          for (var ui = 0; ui < nonAdminUsers.length; ui++) {
+            var u = nonAdminUsers[ui];
+            for (var si = 0; si < shifts.length; si++) {
+              var s = shifts[si];
+              var notif = null;
+              for (var ni = 0; ni < notifs.length; ni++) {
+                if (String(notifs[ni].user_id) === String(u.user_id) && String(notifs[ni].shift_type) === String(s.shift_id)) {
+                  notif = notifs[ni]; break;
+                }
+              }
+              html += '<tr>';
+              html += '<td>' + u.fullname + '</td>';
+              html += '<td>' + s.shift_name + '</td>';
+              html += '<td><label class="switch"><input type="checkbox" ' + (notif ? (notif.is_active ? 'checked' : '') : 'checked') + ' onchange="setNotif(\'' + u.user_id + '\',\'' + s.shift_id + '\',this.checked)"><span class="slider"></span></label></td>';
+              html += '</tr>';
+            }
+          }
+
+          html += '</tbody></table>';
+          document.getElementById('tab-notif').innerHTML = html;
+        });
+      });
+    });
+  }
+
+  function setNotif(userId, shiftType, isActive) {
+    gasCall('apiSetNotification', [{ user_id: userId, shift_type: shiftType, is_active: isActive }]).then(function() {
+      showToast('บันทึกแล้ว', 'success');
+    });
+  }
+
+  // --- Holidays Tab ---
+  function renderHolidaysTab() {
+    gasCall('apiGetHolidays', [String(currentYear)]).then(function(holidays) {
+      var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+      html += '<h3 style="font-size:16px;font-weight:600;color:var(--primary);">วันหยุดนักขัตฤกษ์ พ.ศ. ' + currentYear + '</h3>';
+      html += '<select onchange="loadHolidaysForYear(this.value)" style="padding:6px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:\'Sarabun\';">';
+      [2567,2568,2569,2570,2571].forEach(function(y) {
+        html += '<option value="' + y + '"' + (y === currentYear ? ' selected' : '') + '>' + y + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<button class="btn btn-primary btn-sm" style="margin-bottom:16px;" onclick="showAddHolidayModal()">+ เพิ่มวันหยุด</button>';
+      html += '<table class="data-table"><thead><tr><th>วันที่</th><th>ชื่อวันหยุด</th><th>ประเภท</th><th>จัดการ</th></tr></thead><tbody>';
+
+      if (holidays.length === 0) {
+        html += '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:20px;">ไม่มีข้อมูล</td></tr>';
+      } else {
+        for (var i = 0; i < holidays.length; i++) {
+          var h = holidays[i];
+          html += '<tr>';
+          html += '<td>' + formatDateThaiStr(h.holiday_date) + '</td>';
+          html += '<td>' + h.holiday_name + '</td>';
+          html += '<td>' + (h.holiday_type === 'weekend' ? 'เสาร์-อาทิตย์' : 'นักขัตฤกษ์') + '</td>';
+          html += '<td><button class="btn btn-danger btn-sm" onclick="deleteHoliday(\'' + h.holiday_date + '\')">ลบ</button></td>';
+          html += '</tr>';
+        }
+      }
+
+      html += '</tbody></table>';
+      document.getElementById('tab-holidays').innerHTML = html;
+    });
+  }
+
+  function showAddHolidayModal() {
+    var html = '<h3>เพิ่มวันหยุดนักขัตฤกษ์</h3>';
+    html += '<div class="form-group"><label>วันที่ (ค.ศ.)</label><input type="date" id="holidayDate"></div>';
+    html += '<div class="form-group"><label>ชื่อวันหยุด</label><input type="text" id="holidayName" placeholder="เช่น วันมาฆบูชา"></div>';
+    html += '<div class="form-group"><label>ประเภท</label><select id="holidayType"><option value="national_holiday">วันนักขัตฤกษ์</option><option value="weekend">วันหยุดเสาร์-อาทิตย์</option></select></div>';
+    html += '<div class="modal-actions">';
+    html += '<button class="btn btn-primary" onclick="addHoliday()">บันทึก</button>';
+    html += '<button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>';
+    html += '</div>';
+    document.getElementById('bookingModalContent').innerHTML = html;
+    document.getElementById('bookingModal').classList.add('active');
+  }
+
+  function addHoliday() {
+    var date = document.getElementById('holidayDate').value;
+    var name = document.getElementById('holidayName').value.trim();
+    var type = document.getElementById('holidayType').value;
+
+    if (!date || !name) {
+      showToast('กรุณากรอกข้อมูลให้ครบ', 'error');
+      return;
+    }
+
+    var year = parseInt(date.split('-')[0]) + 543;
+    gasCall('apiAddHoliday', [{ holiday_date: date, holiday_name: name, holiday_type: type, year: year }]).then(function() {
+      closeModal();
+      showToast('เพิ่มวันหยุดแล้ว', 'success');
+      renderHolidaysTab();
+    });
+  }
+
+  function deleteHoliday(date) {
+    if (confirm('ต้องการลบวันหยุดนี้?')) {
+      gasCall('apiDeleteHoliday', [date]).then(function() {
+        showToast('ลบแล้ว', 'success');
+        renderHolidaysTab();
+      });
+    }
+  }
+
+  function loadHolidaysForYear(year) {
+    currentYear = parseInt(year);
+    renderHolidaysTab();
+  }
+
+  // --- Settings Tab ---
+  function renderSettingsTab() {
+    gasCall('apiGetSettings', []).then(function(settings) {
+      var tokenVal = '';
+      var groupVal = '';
+      var orgVal = 'ห้องยาสบปราบ';
+      var autoSend = 'true';
+
+      for (var i = 0; i < settings.length; i++) {
+        if (String(settings[i].key) === 'line_channel_access_token') tokenVal = settings[i].value;
+        if (String(settings[i].key) === 'line_notify_group_id') groupVal = settings[i].value;
+        if (String(settings[i].key) === 'organization_name') orgVal = settings[i].value;
+        if (String(settings[i].key) === 'auto_send_line') autoSend = settings[i].value;
+      }
+
+      var html = '<h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:16px;">ตั้งค่าระบบ</h3>';
+      html += '<div class="analysis-card">';
+      html += '<div class="form-group"><label>ชื่อหน่วยงาน</label><input type="text" id="settingOrgName" value="' + orgVal + '"></div>';
+      html += '<div class="form-group"><label>LINE Channel Access Token</label><input type="text" id="settingToken" value="' + tokenVal + '" placeholder="วาง Token ที่นี่"></div>';
+      html += '<div class="form-group"><label>LINE Target ID (Group ID หรือ User ID)</label><input type="text" id="settingGroupId" value="' + groupVal + '" placeholder="Rxxxx หรือ Uxxxx"></div>';
+      html += '<div class="form-group"><label><input type="checkbox" id="settingAutoSend" ' + (autoSend === 'true' ? 'checked' : '') + '> ส่งแจ้งเตือน LINE อัตโนมัติเมื่อมีการจอง</label></div>';
+      html += '<button class="btn btn-primary" onclick="saveSettings()">บันทึกการตั้งค่า</button>';
+      html += '</div>';
+
+      document.getElementById('tab-settings').innerHTML = html;
+    });
+  }
+
+  function saveSettings() {
+    var tasks = [];
+    tasks.push(gasCall('apiUpdateSetting', ['organization_name', document.getElementById('settingOrgName').value]));
+    tasks.push(gasCall('apiUpdateSetting', ['line_channel_access_token', document.getElementById('settingToken').value]));
+    tasks.push(gasCall('apiUpdateSetting', ['line_notify_group_id', document.getElementById('settingGroupId').value]));
+    tasks.push(gasCall('apiUpdateSetting', ['auto_send_line', document.getElementById('settingAutoSend').checked ? 'true' : 'false']));
+
+    Promise.all(tasks).then(function() {
+      showToast('บันทึกการตั้งค่าแล้ว', 'success');
+    });
+  }
+
+  // ============ REPORTS PAGE ============
+  function renderReportsPage() {
+    var html = '<div class="page-header"><h2>รายงาน</h2><p>สร้างรายงานตามรูปแบบราชการไทย</p></div>';
+
+    html += '<div class="report-selector">';
+    html += '<select id="reportYear" onchange="loadReport()">';
+    [2567,2568,2569,2570,2571].forEach(function(y) {
+      html += '<option value="' + y + '"' + (y === currentYear ? ' selected' : '') + '>พ.ศ. ' + y + '</option>';
+    });
+    html += '</select>';
+
+    html += '<select id="reportMonth" onchange="loadReport()">';
+    for (var i = 0; i <= 12; i++) {
+      html += '<option value="' + i + '"' + (i === currentMonth - 1 ? ' selected' : '') + '>' + MONTH_NAMES[i] + '</option>';
+    }
+    html += '</select></div>';
+
+    html += '<div class="tabs" id="reportTabs">';
+    html += '<div class="tab active" onclick="switchReportTab(\'report-schedule\',this)">ตารางเวรประจำเดือน</div>';
+    html += '<div class="tab" onclick="switchReportTab(\'report-doc\',this)">ตารางเวรเอกสาร</div>';
+    html += '<div class="tab" onclick="switchReportTab(\'report-doc-attach\',this)">เอกสารแนบเวรเอกสาร</div>';
+    html += '<div class="tab" onclick="switchReportTab(\'report-payment\',this)">หลักฐานการจ่ายเงิน</div>';
+    html += '<div class="tab" onclick="switchReportTab(\'report-my-duty\',this)">เวรฉันวันไหน</div>';
+    html += '</div>';
+
+    html += '<div id="report-schedule" class="tab-content active"></div>';
+    html += '<div id="report-doc" class="tab-content"></div>';
+    html += '<div id="report-doc-attach" class="tab-content"></div>';
+    html += '<div id="report-payment" class="tab-content"></div>';
+    html += '<div id="report-my-duty" class="tab-content"></div>';
+
+    html += '<div style="margin-top:16px;text-align:right;">';
+    html += '<button class="btn btn-primary" onclick="window.print()"><span class="material-icons-round" style="font-size:18px;vertical-align:middle;">print</span> พิมพ์ / บันทึก PDF</button>';
+    html += '</div>';
+
+    document.getElementById('mainContent').innerHTML = html;
+    loadReport();
+  }
+
+  function switchReportTab(tabId, el) {
+    document.querySelectorAll('#reportTabs .tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    if (el) el.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  function loadReport() {
+    var year = document.getElementById('reportYear').value;
+    var month = parseInt(document.getElementById('reportMonth').value) + 1;
+    var monthName = MONTH_NAMES[month];
+
+    // Schedule
+    gasCall('apiGetMonthlyReport', [year, String(month)]).then(function(report) {
+      var el = document.getElementById('report-schedule');
+      if (el) el.innerHTML = generateScheduleReport(report, monthName);
+    });
+
+    // Doc duty
+    gasCall('apiGetMonthlyReport', [year, String(month)]).then(function(report) {
+      var docBookings = report.bookings.filter(function(b) {
+        return b.shift_type === 'SHIFT_DOC_NORMAL' || b.shift_type === 'SHIFT_DOC_WEEKEND';
+      });
+      var el = document.getElementById('report-doc');
+      if (el) el.innerHTML = generateDocDutyReport(docBookings, year, monthName);
+    });
+
+    // Doc attach
+    gasCall('apiGetDocDutyAttachment', [year, String(month)]).then(function(data) {
+      var el = document.getElementById('report-doc-attach');
+      if (el) el.innerHTML = generateDocAttachReport(data, monthName);
+    });
+
+    // Payment
+    gasCall('apiGetPaymentReport', [year, String(month)]).then(function(payment) {
+      var el = document.getElementById('report-payment');
+      if (el) el.innerHTML = generatePaymentReport(payment, monthName);
+    });
+
+    // My duty
+    var el = document.getElementById('report-my-duty');
+    if (el) el.innerHTML = generateMyDutyHTML(year, month);
+  }
+
+  function generateScheduleReport(report, monthName) {
+    var html = '<div class="report-content" id="reportPrintArea">';
+    html += '<h2>ตารางเวรประจำเดือน' + monthName + ' พ.ศ. ' + report.thaiYear + '</h2>';
+    html += '<p class="report-subtitle">ห้องยาสบปราบ</p>';
+
+    html += '<table class="data-table"><thead><tr>';
+    html += '<th>วันที่</th><th>ชื่อ-สกุล</th><th>ประเภทเวร</th><th>เวลา</th><th>หมายเหตุ</th>';
+    html += '</tr></thead><tbody>';
+
+    if (report.bookings.length === 0) {
+      html += '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:20px;">ยังไม่มีข้อมูลการจองเวรในเดือนนี้</td></tr>';
+    } else {
+      // Sort by date
+      report.bookings.sort(function(a,b) { return String(a.duty_date).localeCompare(String(b.duty_date)); });
+      for (var i = 0; i < report.bookings.length; i++) {
+        var b = report.bookings[i];
+        html += '<tr>';
+        html += '<td>' + formatDateThaiStr(b.duty_date) + '</td>';
+        html += '<td>' + b.booked_by + '</td>';
+        html += '<td><span class="chip ' + (b.shift_type === 'SHIFT_NORMAL' ? 'chip-normal' : b.shift_type === 'SHIFT_WEEKEND' ? 'chip-weekend' : 'chip-doc') + '">' + b.shift_name + '</span></td>';
+        html += '<td>' + b.time_start + ' - ' + b.time_end + ' (' + b.hours + ' ชม.)</td>';
+        html += '<td>' + (b.notes || '-') + '</td>';
+        html += '</tr>';
+      }
+    }
+
+    html += '</tbody></table>';
+    html += '<div style="margin-top:40px;display:flex;justify-content:space-between;padding:0 40px;">';
+    html += '<div style="text-align:center;"><p style="font-size:14px;margin-bottom:60px;">ผู้จัดทำ</p><p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p></div>';
+    html += '<div style="text-align:center;"><p style="font-size:14px;margin-bottom:60px;">ผู้อนุมัติ</p><p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p></div>';
+    html += '</div></div>';
+    return html;
+  }
+
+  function generateDocDutyReport(bookings, year, monthName) {
+    var html = '<div class="report-content">';
+    html += '<h2>ตารางเวรเอกสาร ประจำเดือน' + monthName + ' พ.ศ. ' + year + '</h2>';
+    html += '<p class="report-subtitle">ห้องยาสบปราบ</p>';
+
+    html += '<table class="data-table"><thead><tr>';
+    html += '<th>วันที่</th><th>ชื่อ-สกุล</th><th>เวลาปฏิบัติงาน</th><th>รายละเอียดการปฏิบัติงาน</th>';
+    html += '</tr></thead><tbody>';
+
+    if (bookings.length === 0) {
+      html += '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:20px;">ยังไม่มีข้อมูลเวรเอกสาร</td></tr>';
+    } else {
+      bookings.sort(function(a,b) { return String(a.duty_date).localeCompare(String(b.duty_date)); });
+      for (var i = 0; i < bookings.length; i++) {
+        var b = bookings[i];
+        html += '<tr>';
+        html += '<td>' + formatDateThaiStr(b.duty_date) + '</td>';
+        html += '<td>' + b.booked_by + '</td>';
+        html += '<td>' + b.time_start + ' - ' + b.time_end + ' (' + b.hours + ' ชม.)</td>';
+        html += '<td>ดูจากเมนูวิเคราะห์ข้อมูล</td>';
+        html += '</tr>';
+      }
+    }
+
+    html += '</tbody></table></div>';
+    return html;
+  }
+
+  function generateDocAttachReport(data, monthName) {
+    var html = '<div class="report-content">';
+    html += '<h2>เอกสารแนบเวรเอกสาร เดือน' + monthName + ' พ.ศ. ' + data.thaiYear + '</h2>';
+    html += '<p class="report-subtitle">ห้องยาสบปราบ | จำนวนโครงการทั้งหมด: ' + data.total_projects_available + ' โครงการ</p>';
+
+    if (data.users.length === 0) {
+      html += '<div class="empty-state"><span class="material-icons-round">analytics</span><p>ไม่มีบุคคลอยู่เวรเอกสารในเดือนนี้</p></div>';
+      html += '</div>';
+      return html;
+    }
+
+    for (var ui = 0; ui < data.users.length; ui++) {
+      var user = data.users[ui];
+      html += '<div style="margin-top:24px;padding-top:24px;border-top:2px solid var(--border);">';
+      html += '<h3 style="font-size:16px;font-weight:700;color:var(--primary);margin-bottom:12px;">👤 ' + user.booked_by + ' (' + user.total_days + ' วัน)</h3>';
+
+      html += '<table class="data-table"><thead><tr>';
+      html += '<th>วันที่ (ว/ด/ปี พ.ศ.)</th><th>เวลาปฏิบัติงาน</th><th>รายละเอียดการปฏิบัติงาน (เลขโครงการ)</th><th>ผลงาน</th>';
+      html += '</tr></thead><tbody>';
+
+      for (var di = 0; di < user.day_details.length; di++) {
+        var d = user.day_details[di];
+        html += '<tr>';
+        html += '<td>' + d.dateThai + '</td>';
+        html += '<td>' + d.time_start + ' - ' + d.time_end + ' (' + d.hours + ' ชม.)</td>';
+        html += '<td>';
+        if (d.projects.length > 0) {
+          for (var pi = 0; pi < d.projects.length; pi++) {
+            html += '<span style="display:inline-block;background:var(--bg);padding:2px 8px;border-radius:4px;margin:2px;font-size:12px;">' + d.projects[pi] + '</span>';
+          }
+        } else {
+          html += '-';
+        }
+        html += '</td>';
+        html += '<td style="text-align:center;font-weight:600;">' + d.project_count + ' โครงการ</td>';
+        html += '</tr>';
+      }
+
+      html += '<tr style="font-weight:600;background:#f0f7ff;">';
+      html += '<td>รวม</td>';
+      html += '<td>' + user.total_hours + ' ชม.</td>';
+      html += '<td>' + user.total_projects + ' โครงการ</td>';
+      html += '<td></td>';
+      html += '</tr></tbody></table>';
+      html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function generatePaymentReport(payment, monthName) {
+    var totalPayment = 0;
+    var totalDays = 0;
+    var totalHours = 0;
+
+    for (var i = 0; i < payment.summary.length; i++) {
+      totalPayment += payment.summary[i].total_payment;
+      totalDays += payment.summary[i].normal_days + payment.summary[i].weekend_days + payment.summary[i].doc_normal_days + payment.summary[i].doc_weekend_days;
+      totalHours += payment.summary[i].total_hours;
+    }
+
+    var html = '<div class="report-content">';
+    html += '<h2>หลักฐานการจ่ายเงินค่าตอบแทนเวร</h2>';
+    html += '<p class="report-subtitle">เดือน' + monthName + ' พ.ศ. ' + payment.thaiYear + ' — ห้องยาสบปราบ</p>';
+
+    html += '<table class="data-table"><thead><tr>';
+    html += '<th>ชื่อ-สกุล</th><th>เวรวันปกติ</th><th>เวรวันหยุด</th><th>เวรเอกสาร(ปกติ)</th><th>เวรเอกสาร(วันหยุด)</th><th>ชั่วโมงรวม</th><th>เงินรวม (บาท)</th>';
+    html += '</tr></thead><tbody>';
+
+    for (var i = 0; i < payment.summary.length; i++) {
+      var s = payment.summary[i];
+      var dayCount = s.normal_days + s.weekend_days + s.doc_normal_days + s.doc_weekend_days;
+      html += '<tr>';
+      html += '<td>' + s.booked_by + '</td>';
+      html += '<td>' + s.normal_days + '</td>';
+      html += '<td>' + s.weekend_days + '</td>';
+      html += '<td>' + s.doc_normal_days + '</td>';
+      html += '<td>' + s.doc_weekend_days + '</td>';
+      html += '<td>' + s.total_hours + '</td>';
+      html += '<td style="text-align:right;font-weight:600;">' + s.total_payment.toFixed(2) + '</td>';
+      html += '</tr>';
+    }
+
+    html += '<tr style="font-weight:700;background:#f0f7ff;">';
+    html += '<td>รวม</td>';
+    html += '<td>' + payment.summary.reduce(function(s,r){return s+r.normal_days;},0) + '</td>';
+    html += '<td>' + payment.summary.reduce(function(s,r){return s+r.weekend_days;},0) + '</td>';
+    html += '<td>' + payment.summary.reduce(function(s,r){return s+r.doc_normal_days;},0) + '</td>';
+    html += '<td>' + payment.summary.reduce(function(s,r){return s+r.doc_weekend_days;},0) + '</td>';
+    html += '<td>' + totalHours + '</td>';
+    html += '<td style="text-align:right;">' + totalPayment.toFixed(2) + '</td>';
+    html += '</tr></tbody></table>';
+
+    html += '<div style="margin-top:40px;display:flex;justify-content:space-between;padding:0 40px;">';
+    html += '<div style="text-align:center;"><p style="font-size:14px;margin-bottom:60px;">ผู้จ่ายเงิน</p><p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p></div>';
+    html += '<div style="text-align:center;"><p style="font-size:14px;margin-bottom:60px;">ผู้รับเงิน</p><p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p></div>';
+    html += '</div></div>';
+    return html;
+  }
+
+  function generateMyDutyHTML(year, month) {
+    gasCall('apiGetUsers', []).then(function(users) {
+      var container = document.getElementById('report-my-duty');
+      if (!container) return;
+
+      var html = '<div style="margin-bottom:16px;">';
+      html += '<label style="font-size:14px;font-weight:500;">เลือกบุคลากร:</label> ';
+      html += '<select id="myDutyUserSelect" onchange="loadMyDutyData()" style="padding:8px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:\'Sarabun\';margin-left:8px;">';
+      html += '<option value="' + currentUser.user_id + '">—ของฉัน—</option>';
+      for (var i = 0; i < users.length; i++) {
+        html += '<option value="' + users[i].user_id + '">' + users[i].fullname + '</option>';
+      }
+      html += '</select></div>';
+      html += '<div id="myDutyResult"></div>';
+
+      container.innerHTML = html;
+      loadMyDutyData();
+    });
+    return '<div class="loading"><div class="spinner"></div> กำลังโหลด...</div>';
+  }
+
+  function loadMyDutyData() {
+    var userId = document.getElementById('myDutyUserSelect').value;
+    var year = document.getElementById('reportYear').value;
+    var month = parseInt(document.getElementById('reportMonth').value) + 1;
+    var monthName = MONTH_NAMES[month];
+
+    gasCall('apiGetMyDuty', [userId, year, String(month)]).then(function(data) {
+      var result = document.getElementById('myDutyResult');
+      if (!result) return;
+
+      var userName = currentUser.fullname;
+      // Try to find user name from bookings
+      if (data.bookings.length > 0 && data.bookings[0].booked_by) {
+        userName = data.bookings[0].booked_by;
+      }
+
+      var html = '<h3 style="font-size:16px;font-weight:700;color:var(--primary);margin-bottom:16px;">';
+      html += 'สรุปเวรของ ' + userName + ' — เดือน' + monthName + ' พ.ศ. ' + year + '</h3>';
+
+      html += '<div class="calendar-summary" style="margin-bottom:20px;">';
+      html += '<div class="summary-card"><div><div class="num">' + data.total_days + '</div><div class="label">วันทั้งหมด</div></div></div>';
+      html += '<div class="summary-card working"><div><div class="num">' + (data.normal_days.length + data.doc_normal_days.length) + '</div><div class="label">เวรวันปกติ</div></div></div>';
+      html += '<div class="summary-card weekend"><div><div class="num">' + (data.weekend_days.length + data.doc_weekend_days.length) + '</div><div class="label">เวรวันหยุด</div></div></div>';
+      html += '</div>';
+
+      // Detail table
+      if (data.bookings.length > 0) {
+        data.bookings.sort(function(a,b) { return String(a.duty_date).localeCompare(String(b.duty_date)); });
+        html += '<table class="data-table" style="margin-bottom:20px;"><thead><tr><th>วันที่</th><th>ประเภทเวร</th><th>เวลา</th><th>ชั่วโมง</th></tr></thead><tbody>';
+        for (var i = 0; i < data.bookings.length; i++) {
+          var b = data.bookings[i];
+          html += '<tr>';
+          html += '<td>' + formatDateThaiStr(b.duty_date) + '</td>';
+          html += '<td><span class="chip ' + (b.shift_type === 'SHIFT_NORMAL' ? 'chip-normal' : b.shift_type === 'SHIFT_WEEKEND' ? 'chip-weekend' : 'chip-doc') + '">' + b.shift_name + '</span></td>';
+          html += '<td>' + b.time_start + ' - ' + b.time_end + '</td>';
+          html += '<td>' + b.hours + ' ชม.</td>';
+          html += '</tr>';
+        }
+        html += '</tbody></table>';
+      }
+
+      // Summary sections
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">';
+
+      html += '<div class="analysis-card"><h3>เวรวันปกติ (' + data.normal_days.length + ' วัน)</h3>';
+      html += '<p style="font-size:14px;color:var(--text-light);">';
+      if (data.normal_days.length > 0) {
+        for (var i = 0; i < data.normal_days.length; i++) {
+          html += formatDateThaiStr(data.normal_days[i].duty_date) + '<br>';
+        }
+      } else { html += '-'; }
+      html += '</p></div>';
+
+      html += '<div class="analysis-card"><h3>เวรเสาร์-อาทิตย์/นักขัตฤกษ์ (' + data.weekend_days.length + ' วัน)</h3>';
+      html += '<p style="font-size:14px;color:var(--text-light);">';
+      if (data.weekend_days.length > 0) {
+        for (var i = 0; i < data.weekend_days.length; i++) {
+          html += formatDateThaiStr(data.weekend_days[i].duty_date) + '<br>';
+        }
+      } else { html += '-'; }
+      html += '</p></div>';
+
+      html += '<div class="analysis-card"><h3>เวรเอกสาร วันปกติ (' + data.doc_normal_days.length + ' วัน)</h3>';
+      html += '<p style="font-size:14px;color:var(--text-light);">';
+      if (data.doc_normal_days.length > 0) {
+        for (var i = 0; i < data.doc_normal_days.length; i++) {
+          html += formatDateThaiStr(data.doc_normal_days[i].duty_date) + '<br>';
+        }
+      } else { html += '-'; }
+      html += '</p></div>';
+
+      html += '<div class="analysis-card"><h3>เวรเอกสาร วันหยุด (' + data.doc_weekend_days.length + ' วัน)</h3>';
+      html += '<p style="font-size:14px;color:var(--text-light);">';
+      if (data.doc_weekend_days.length > 0) {
+        for (var i = 0; i < data.doc_weekend_days.length; i++) {
+          html += formatDateThaiStr(data.doc_weekend_days[i].duty_date) + '<br>';
+        }
+      } else { html += '-'; }
+      html += '</p></div>';
+
+      html += '</div>';
+      result.innerHTML = html;
+    });
+  }
+
+  // ============ ANALYSIS PAGE ============
+  function renderAnalysisPage() {
+    var html = '<div class="page-header"><h2>วิเคราะห์ข้อมูล</h2><p>วิเคราะห์เวรเอกสารและกระจายงานโครงการ</p></div>';
+
+    html += '<div class="analysis-card">';
+    html += '<div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">';
+
+    html += '<div class="form-group" style="margin:0;flex:1;min-width:150px;">';
+    html += '<label>เดือน</label><select id="analysisMonth" onchange="loadAnalysisUsers()">';
+    for (var i = 0; i <= 12; i++) {
+      html += '<option value="' + i + '"' + (i === currentMonth - 1 ? ' selected' : '') + '>' + MONTH_NAMES[i] + '</option>';
+    }
+    html += '</select></div>';
+
+    html += '<div class="form-group" style="margin:0;flex:1;min-width:150px;">';
+    html += '<label>ปี (พ.ศ.)</label><select id="analysisYear" onchange="loadAnalysisUsers()">';
+    [2567,2568,2569,2570,2571].forEach(function(y) {
+      html += '<option value="' + y + '"' + (y === currentYear ? ' selected' : '') + '>' + y + '</option>';
+    });
+    html += '</select></div>';
+
+    html += '<div class="form-group" style="margin:0;flex:2;min-width:200px;">';
+    html += '<label>เลือกบุคคล (อยู่เวรเอกสาร)</label>';
+    html += '<select id="analysisUser" onchange="loadAnalysisData()">';
+    html += '<option value="">-- เลือกบุคคล --</option>';
+    html += '</select></div>';
+
+    html += '</div></div>';
+    html += '<div id="analysisResult">';
+    html += '<div class="empty-state"><span class="material-icons-round">analytics</span><p>เลือกเดือน/ปี และบุคคลเพื่อดูผลการวิเคราะห์</p></div>';
+    html += '</div>';
+
+    document.getElementById('mainContent').innerHTML = html;
+    loadAnalysisUsers();
+  }
+
+  function loadAnalysisUsers() {
+    var year = document.getElementById('analysisYear').value;
+    var month = parseInt(document.getElementById('analysisMonth').value) + 1;
+
+    gasCall('apiGetDocDutyUsers', [year, String(month)]).then(function(users) {
+      var sel = document.getElementById('analysisUser');
+      if (!sel) return;
+
+      if (users.length === 0) {
+        sel.innerHTML = '<option value="">-- ไม่มีบุคคลอยู่เวรเอกสาร --</option>';
+        return;
+      }
+
+      sel.innerHTML = '<option value="">-- เลือกบุคคล --</option>';
+      for (var i = 0; i < users.length; i++) {
+        sel.innerHTML += '<option value="' + users[i].user_id + '">' + users[i].booked_by + ' (' + users[i].dates.length + ' วัน)</option>';
+      }
+    });
+  }
+
+  function loadAnalysisData() {
+    var userId = document.getElementById('analysisUser').value;
+    if (!userId) {
+      document.getElementById('analysisResult').innerHTML =
+        '<div class="empty-state"><span class="material-icons-round">analytics</span><p>เลือกบุคคลเพื่อดูผลการวิเคราะห์</p></div>';
+      return;
+    }
+
+    var year = document.getElementById('analysisYear').value;
+    var month = parseInt(document.getElementById('analysisMonth').value) + 1;
+
+    document.getElementById('analysisResult').innerHTML = '<div class="loading"><div class="spinner"></div> กำลังวิเคราะห์...</div>';
+
+    gasCall('apiAnalyzeDocDuty', [userId, year, String(month)]).then(function(data) {
+      var html = '<div class="analysis-card">';
+      html += '<h3>ผลการวิเคราะห์ — กระจายงานโครงการ</h3>';
+      html += '<p style="color:var(--text-light);font-size:14px;margin-bottom:16px;">';
+      html += 'โครงการทั้งหมด: ' + data.total_projects + ' โครงการ | กระจาย: ' + data.projects_per_day + ' โครงการ/วัน | ';
+      html += 'ชั่วโมงรวม: ' + data.total_hours + ' ชม.</p>';
+
+      if (data.dates.length === 0) {
+        html += '<div class="empty-state"><span class="material-icons-round">info</span><p>ไม่มีข้อมูล</p></div>';
+      } else {
+        html += '<table class="data-table"><thead><tr>';
+        html += '<th>วันที่ (ว/ด/ปี พ.ศ.)</th><th>วัน</th><th>เวลาปฏิบัติงาน</th><th>รายละเอียดการปฏิบัติงาน (เลขโครงการ)</th><th>ผลงาน</th>';
+        html += '</tr></thead><tbody>';
+
+        for (var i = 0; i < data.dates.length; i++) {
+          var d = data.dates[i];
+          html += '<tr>';
+          html += '<td>' + d.dateThai + '</td>';
+          html += '<td>' + d.dayOfWeek + '</td>';
+          html += '<td>' + d.time_start + ' - ' + d.time_end + ' (' + d.hours + ' ชม.)</td>';
+          html += '<td>';
+          if (d.projects.length > 0) {
+            for (var pi = 0; pi < d.projects.length; pi++) {
+              html += '<span style="display:inline-block;background:var(--bg);padding:2px 8px;border-radius:4px;margin:2px;font-size:12px;">' + d.projects[pi] + '</span>';
+            }
+          } else {
+            html += '-';
+          }
+          html += '</td>';
+          html += '<td style="text-align:center;font-weight:600;">' + d.project_count + ' โครงการ</td>';
+          html += '</tr>';
+        }
+
+        html += '<tr style="font-weight:700;background:#f0f7ff;">';
+        html += '<td>รวม</td><td></td>';
+        html += '<td>' + data.total_hours + ' ชม.</td>';
+        html += '<td>' + data.total_project_work + ' โครงการ</td>';
+        html += '<td></td>';
+        html += '</tr></tbody></table>';
+      }
+
+      html += '</div>';
+      html += '<div style="margin-top:16px;text-align:right;">';
+      html += '<button class="btn btn-primary" onclick="window.print()"><span class="material-icons-round" style="font-size:18px;vertical-align:middle;">print</span> พิมพ์รายงาน</button>';
+      html += '</div>';
+
+      document.getElementById('analysisResult').innerHTML = html;
+    }).catch(function(err) {
+      document.getElementById('analysisResult').innerHTML =
+        '<div class="empty-state"><span class="material-icons-round">error</span><p>เกิดข้อผิดพลาด: ' + err.message + '</p></div>';
+    });
+  }
+
+  // ============ INIT ============
+  document.getElementById('loginName').focus();
+
+  document.getElementById('bookingModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Enter key on login
+  document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+  });
+  </script>
+</body>
+</html>
