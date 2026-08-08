@@ -874,24 +874,28 @@
 
   <script>
   // ============ STATE ============
-  let currentUser = null;
-  let currentPage = 'booking';
-  let currentYear = new Date().getFullYear() + 543;
-  let currentMonth = new Date().getMonth() + 1;
+  var currentUser = null;
+  var currentPage = "booking";
+  var currentYear = new Date().getFullYear() + 543;
+  var currentMonth = new Date().getMonth() + 1;
 
   // ============ API CALL ============
   function gasCall(fn, args) {
-    return new Promise((resolve, reject) => {
-      google.script.run
+    var fnName = fn;
+    var fnArgs = args;
+    return new Promise(function(resolve, reject) {
+      var runner = google.script.run
         .withSuccessHandler(resolve)
-        .withFailureHandler(reject)[fn](...args);
+        .withFailureHandler(reject);
+      // Apply arguments based on fn name
+      runner[fnName].apply(runner, fnArgs);
     });
   }
 
   // ============ TOAST ============
   function showToast(msg, type) {
     type = type || 'success';
-    const t = document.getElementById('toast');
+    var t = document.getElementById('toast');
     t.textContent = msg;
     t.className = 'toast ' + type;
     setTimeout(function() { t.classList.add('show'); }, 10);
@@ -1234,12 +1238,14 @@
     html += '<div class="tab" onclick="switchSettingsTab(\'tab-shifts\',this)">ประเภทเวร</div>';
     html += '<div class="tab" onclick="switchSettingsTab(\'tab-notif\',this)">การแจ้งเตือน</div>';
     html += '<div class="tab" onclick="switchSettingsTab(\'tab-holidays\',this)">วันหยุด</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-egp\',this)">เลขโครงการ</div>';
     html += '<div class="tab" onclick="switchSettingsTab(\'tab-settings\',this)">ตั้งค่าระบบ</div>';
     html += '</div>';
     html += '<div id="tab-users" class="tab-content active"></div>';
     html += '<div id="tab-shifts" class="tab-content"></div>';
     html += '<div id="tab-notif" class="tab-content"></div>';
     html += '<div id="tab-holidays" class="tab-content"></div>';
+    html += '<div id="tab-egp" class="tab-content"></div>';
     html += '<div id="tab-settings" class="tab-content"></div>';
 
     document.getElementById('mainContent').innerHTML = html;
@@ -1247,6 +1253,7 @@
     renderShiftsTab();
     renderNotifTab();
     renderHolidaysTab();
+    renderEgpTab();
     renderSettingsTab();
   }
 
@@ -1541,6 +1548,65 @@
   function loadHolidaysForYear(year) {
     currentYear = parseInt(year);
     renderHolidaysTab();
+  }
+
+  // --- EGP Projects Tab ---
+  function renderEgpTab() {
+    gasCall('apiGetEgpProjects', []).then(function(projects) {
+      var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+      html += '<h3 style="font-size:16px;font-weight:600;color:var(--primary);">เลขที่โครงการ (EGP)</h3>';
+      html += '<span style="font-size:14px;color:var(--text-light);">ทั้งหมด ' + projects.length + ' โครงการ</span>';
+      html += '</div>';
+
+      html += '<div style="display:flex;gap:8px;margin-bottom:16px;">';
+      html += '<input type="text" id="egpProjectNo" placeholder="เลขที่โครงการ (เช่น EGP-001)" style="flex:1;padding:8px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:\'Sarabun\';">';
+      html += '<button class="btn btn-primary btn-sm" onclick="addEgpProject()">+ เพิ่มโครงการ</button>';
+      html += '</div>';
+
+      html += '<table class="data-table"><thead><tr><th>ที่</th><th>เลขที่โครงการ</th><th>จัดการ</th></tr></thead><tbody>';
+
+      if (projects.length === 0) {
+        html += '<tr><td colspan="3" style="text-align:center;color:var(--text-light);padding:20px;">ยังไม่มีข้อมูลโครงการ</td></tr>';
+      } else {
+        for (var i = 0; i < projects.length; i++) {
+          var p = projects[i];
+          html += '<tr>';
+          html += '<td>' + (i + 1) + '</td>';
+          html += '<td>' + p.project_no + '</td>';
+          html += '<td><button class="btn btn-danger btn-sm" onclick="deleteEgpProject(\'' + p.project_no + '\')">ลบ</button></td>';
+          html += '</tr>';
+        }
+      }
+
+      html += '</tbody></table>';
+      document.getElementById('tab-egp').innerHTML = html;
+    });
+  }
+
+  function addEgpProject() {
+    var projectNo = document.getElementById('egpProjectNo').value.trim();
+    if (!projectNo) {
+      showToast('กรุณากรอกเลขที่โครงการ', 'error');
+      return;
+    }
+    gasCall('apiAddEgpProject', [{ project_no: projectNo }]).then(function(result) {
+      if (result && result.success) {
+        document.getElementById('egpProjectNo').value = '';
+        showToast('เพิ่มโครงการแล้ว', 'success');
+        renderEgpTab();
+      } else {
+        showToast(result ? result.message : 'เกิดข้อผิดพลาด', 'error');
+      }
+    });
+  }
+
+  function deleteEgpProject(projectNo) {
+    if (confirm('ต้องการลบโครงการนี้?')) {
+      gasCall('apiDeleteEgpProject', [{ project_no: projectNo }]).then(function() {
+        showToast('ลบแล้ว', 'success');
+        renderEgpTab();
+      });
+    }
   }
 
   // --- Settings Tab ---

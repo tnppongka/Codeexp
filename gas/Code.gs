@@ -14,13 +14,13 @@
  */
 
 // ============ GLOBAL CONFIG ============
-const BUDGET_OFFSET = 543; // พ.ศ. - ค.ศ.
+var BUDGET_OFFSET = 543; // พ.ศ. - ค.ศ.
 
 // ============ SHEET HELPERS ============
 
 function getSheet(name) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(name);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
   }
@@ -32,18 +32,30 @@ function getSheet(name) {
  */
 function getAllData(sheetName) {
   try {
-    const sheet = getSheet(sheetName);
-    const lastRow = sheet.getLastRow();
-    const lastCol = sheet.getLastColumn();
+    var sheet = getSheet(sheetName);
+    var lastRow = sheet.getLastRow();
+    var lastCol = sheet.getLastColumn();
     if (lastRow <= 1 || lastCol === 0) return [];
-    const data = sheet.getRange(1, 1, lastRow, lastCol).getValues();
+    var data = sheet.getRange(1, 1, lastRow, lastCol).getValues();
     if (data.length <= 1) return [];
-    const headers = data[0];
-    return data.slice(1).map(row => {
-      const obj = {};
-      headers.forEach((h, i) => { obj[h] = row[i]; });
-      return obj;
-    });
+    var headers = data[0];
+    var result = [];
+    for (var i = 1; i < data.length; i++) {
+      var obj = {};
+      for (var j = 0; j < headers.length; j++) {
+        var val = data[i][j];
+        // Convert Date objects to YYYY-MM-DD strings
+        if (val instanceof Date && !isNaN(val)) {
+          var y = val.getFullYear();
+          var m = ('0' + (val.getMonth() + 1)).slice(-2);
+          var d = ('0' + val.getDate()).slice(-2);
+          val = y + '-' + m + '-' + d;
+        }
+        obj[String(headers[j])] = val;
+      }
+      result.push(obj);
+    }
+    return result;
   } catch(e) {
     Logger.log('getAllData error [' + sheetName + ']: ' + e.message);
     return [];
@@ -54,13 +66,13 @@ function getAllData(sheetName) {
  * เพิ่มแถวใหม่ในชีท
  */
 function addRow(sheetName, rowData) {
-  const sheet = getSheet(sheetName);
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const row = headers.map(h => {
-    const val = rowData[h];
-    if (val === undefined || val === null) return '';
-    return val;
-  });
+  var sheet = getSheet(sheetName);
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var row = [];
+  for (var i = 0; i < headers.length; i++) {
+    var val = rowData[String(headers[i])];
+    row.push(val === undefined || val === null ? '' : val);
+  }
   sheet.appendRow(row);
   return true;
 }
@@ -69,23 +81,24 @@ function addRow(sheetName, rowData) {
  * อัพเดทแถวตามเงื่อนไข
  */
 function updateRow(sheetName, matchField, matchValue, updateData) {
-  const sheet = getSheet(sheetName);
-  const data = sheet.getDataRange().getValues();
+  var sheet = getSheet(sheetName);
+  var data = sheet.getDataRange().getValues();
   if (data.length <= 1) return false;
-  const headers = data[0];
-  const matchIdx = headers.indexOf(matchField);
+  var headers = data[0];
+  var matchIdx = headers.indexOf(matchField);
   if (matchIdx === -1) return false;
 
-  const updateKeys = Object.keys(updateData);
-  const updateCols = updateKeys.map(k => headers.indexOf(k));
+  var updateKeys = Object.keys(updateData);
+  var updateCols = updateKeys.map(function(k) { return headers.indexOf(k); });
 
-  for (let i = 1; i < data.length; i++) {
+  for (var i = 1; i < data.length; i++) {
     if (String(data[i][matchIdx]).trim() === String(matchValue).trim()) {
-      updateCols.forEach((colIdx, idx) => {
+      for (var k = 0; k < updateKeys.length; k++) {
+        var colIdx = updateCols[k];
         if (colIdx >= 0) {
-          sheet.getRange(i + 1, colIdx + 1).setValue(updateData[updateKeys[idx]]);
+          sheet.getRange(i + 1, colIdx + 1).setValue(updateData[updateKeys[k]]);
         }
-      });
+      }
       return true;
     }
   }
@@ -96,14 +109,14 @@ function updateRow(sheetName, matchField, matchValue, updateData) {
  * ลบแถวตามเงื่อนไข
  */
 function deleteRow(sheetName, matchField, matchValue) {
-  const sheet = getSheet(sheetName);
-  const data = sheet.getDataRange().getValues();
+  var sheet = getSheet(sheetName);
+  var data = sheet.getDataRange().getValues();
   if (data.length <= 1) return false;
-  const headers = data[0];
-  const matchIdx = headers.indexOf(matchField);
+  var headers = data[0];
+  var matchIdx = headers.indexOf(matchField);
   if (matchIdx === -1) return false;
 
-  for (let i = data.length - 1; i >= 1; i--) {
+  for (var i = data.length - 1; i >= 1; i--) {
     if (String(data[i][matchIdx]).trim() === String(matchValue).trim()) {
       sheet.deleteRow(i + 1);
       return true;
@@ -124,9 +137,9 @@ function generateId(prefix) {
  */
 function formatDateKey(date) {
   if (!(date instanceof Date) || isNaN(date)) return '';
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
+  var y = date.getFullYear();
+  var m = ('0' + (date.getMonth() + 1)).slice(-2);
+  var d = ('0' + date.getDate()).slice(-2);
   return y + '-' + m + '-' + d;
 }
 
@@ -135,7 +148,7 @@ function formatDateKey(date) {
  */
 function formatDateThai(date) {
   if (!(date instanceof Date) || isNaN(date)) return '';
-  const thaiMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  var thaiMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
   return date.getDate() + ' ' + thaiMonths[date.getMonth()] + ' พ.ศ. ' + (date.getFullYear() + BUDGET_OFFSET);
 }
 
@@ -144,9 +157,9 @@ function formatDateThai(date) {
  */
 function formatDateNumeric(date) {
   if (!(date instanceof Date) || isNaN(date)) return '';
-  const d = String(date.getDate()).padStart(2, '0');
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const y = date.getFullYear() + BUDGET_OFFSET;
+  var d = ('0' + date.getDate()).slice(-2);
+  var m = ('0' + (date.getMonth() + 1)).slice(-2);
+  var y = date.getFullYear() + BUDGET_OFFSET;
   return d + '/' + m + '/' + y;
 }
 
@@ -156,8 +169,8 @@ function formatDateNumeric(date) {
 function parseDateString(dateStr) {
   if (dateStr instanceof Date) return dateStr;
   if (!dateStr) return null;
-  const str = String(dateStr);
-  const parts = str.substring(0, 10).split('-');
+  var str = String(dateStr);
+  var parts = str.substring(0, 10).split('-');
   if (parts.length !== 3) return null;
   return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
 }
@@ -166,7 +179,7 @@ function parseDateString(dateStr) {
  * ชื่อเดือนไทย
  */
 function getThaiMonthName(monthNum) {
-  const months = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+  var months = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
     'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
   return months[parseInt(monthNum)] || '';
 }
@@ -175,14 +188,14 @@ function getThaiMonthName(monthNum) {
  * ชื่อเดือนไทยแบบย่อ
  */
 function getThaiMonthNameShort(monthIdx) {
-  const names = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  var names = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
   return names[parseInt(monthIdx)] || '';
 }
 
 // ============ INITIALIZE SHEETS ============
 
 function initializeSheets() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
 
   // --- 1. users ---
   let s = ss.getSheetByName('users');
@@ -243,7 +256,9 @@ function initializeSheets() {
       ['2025-12-10','วันรัฐธรรมนูญ','national_holiday',2568],
       ['2025-12-31','วันสิ้นปี','national_holiday',2568],
     ];
-    hol.forEach(h => s.appendRow(h));
+    for (var hi = 0; hi < hol.length; hi++) {
+      s.appendRow(hol[hi]);
+    }
   }
 
   // --- 6. egp ---
@@ -271,12 +286,18 @@ function initializeSheets() {
 // ============ API: AUTH ============
 
 function apiLogin(fullname, password) {
-  const users = getAllData('users');
-  const user = users.find(u =>
-    String(u.fullname).trim() === String(fullname).trim() &&
-    String(u.password) === String(password)
-  );
+  var users = getAllData('users');
+  var user = null;
+  for (var i = 0; i < users.length; i++) {
+    if (String(users[i].fullname).trim() === String(fullname).trim() &&
+        String(users[i].password) === String(password)) {
+      user = users[i];
+      break;
+    }
+  }
   if (user) {
+    // Normalize is_admin to boolean
+    user.is_admin = (user.is_admin === true || user.is_admin === 'true' || user.is_admin === 'TRUE');
     return { success: true, user: user };
   }
   return { success: false, message: 'ชื่อหรือรหัสผ่านไม่ถูกต้อง' };
@@ -293,9 +314,12 @@ function apiAddUser(data) {
     return { success: false, message: 'กรุณากรอกชื่อและรหัสผ่าน' };
   }
   // Check duplicate
-  const users = getAllData('users');
-  const dup = users.find(u => String(u.fullname).trim() === String(data.fullname).trim());
-  if (dup) return { success: false, message: 'ชื่อนี้มีอยู่แล้วในระบบ' };
+  var users = getAllData('users');
+  for (var i = 0; i < users.length; i++) {
+    if (String(users[i].fullname).trim() === String(data.fullname).trim()) {
+      return { success: false, message: 'ชื่อนี้มีอยู่ในระบบ' };
+    }
+  }
 
   data.user_id = generateId('USR');
   if (data.is_admin === undefined) data.is_admin = false;
@@ -306,12 +330,13 @@ function apiAddUser(data) {
 
 function apiUpdateUser(userId, data) {
   // Validate
-  const users = getAllData('users');
-  const dup = users.find(u =>
-    String(u.user_id) !== String(userId) &&
-    String(u.fullname).trim() === String(data.fullname).trim()
-  );
-  if (dup) return { success: false, message: 'ชื่อนี้มีอยู่แล้วในระบบ' };
+  var users = getAllData('users');
+  for (var i = 0; i < users.length; i++) {
+    if (String(users[i].user_id) !== String(userId) &&
+        String(users[i].fullname).trim() === String(data.fullname).trim()) {
+      return { success: false, message: 'ชื่อนี้มีอยู่ในระบบ' };
+    }
+  }
 
   return { success: updateRow('users', 'user_id', userId, data) };
 }
@@ -321,15 +346,19 @@ function apiDeleteUser(userId) {
     return { success: false, message: 'ไม่สามารถลบ Admin หลักได้' };
   }
   // Also delete related bookings
-  const bookings = getAllData('bookings');
-  bookings.filter(b => String(b.user_id) === String(userId)).forEach(b => {
-    deleteRow('bookings', 'booking_id', b.booking_id);
-  });
+  var bookings = getAllData('bookings');
+  for (var i = 0; i < bookings.length; i++) {
+    if (String(bookings[i].user_id) === String(userId)) {
+      deleteRow('bookings', 'booking_id', bookings[i].booking_id);
+    }
+  }
   // Delete related notifications
-  const notifs = getAllData('notifications');
-  notifs.filter(n => String(n.user_id) === String(userId)).forEach(n => {
-    deleteRow('notifications', 'notif_id', n.notif_id);
-  });
+  var notifs = getAllData('notifications');
+  for (var i = 0; i < notifs.length; i++) {
+    if (String(notifs[i].user_id) === String(userId)) {
+      deleteRow('notifications', 'notif_id', notifs[i].notif_id);
+    }
+  }
   return { success: deleteRow('users', 'user_id', userId) };
 }
 
@@ -346,26 +375,34 @@ function apiUpdateShift(shiftId, data) {
 // ============ API: BOOKINGS ============
 
 function apiGetBookings(year, month) {
-  const allBookings = getAllData('bookings');
+  var allBookings = getAllData('bookings');
   if (year && month) {
-    const christianYear = parseInt(year) - BUDGET_OFFSET;
-    const monthNum = parseInt(month);
-    const prefix = christianYear + '-' + String(monthNum).padStart(2, '0');
-    return allBookings.filter(b => {
-      const dateStr = String(b.duty_date).substring(0, 10);
-      return dateStr.startsWith(prefix) && b.status !== 'cancelled';
-    });
+    var christianYear = parseInt(year) - BUDGET_OFFSET;
+    var monthNum = parseInt(month);
+    var prefix = christianYear + '-' + ('0' + monthNum).slice(-2);
+    var result = [];
+    for (var i = 0; i < allBookings.length; i++) {
+      var dateStr = String(allBookings[i].duty_date).substring(0, 10);
+      if (dateStr.substring(0, 7) === prefix && allBookings[i].status !== 'cancelled') {
+        result.push(allBookings[i]);
+      }
+    }
+    return result;
   }
-  return allBookings.filter(b => b.status !== 'cancelled');
+  return allBookings.filter(function(b) { return b.status !== 'cancelled'; });
 }
 
 function apiCheckBooking(date) {
-  const allBookings = getAllData('bookings');
-  const dateStr = String(date).substring(0, 10);
-  const existing = allBookings.find(b => {
-    const bDate = String(b.duty_date).substring(0, 10);
-    return bDate === dateStr && b.status !== 'cancelled';
-  });
+  var allBookings = getAllData('bookings');
+  var dateStr = String(date).substring(0, 10);
+  var existing = null;
+  for (var i = 0; i < allBookings.length; i++) {
+    var bDate = String(allBookings[i].duty_date).substring(0, 10);
+    if (bDate === dateStr && allBookings[i].status !== 'cancelled') {
+      existing = allBookings[i];
+      break;
+    }
+  }
   if (existing) {
     return {
       booked: true,
@@ -384,7 +421,7 @@ function apiBookDuty(bookingData) {
   }
 
   // Check if already booked
-  const check = apiCheckBooking(bookingData.duty_date);
+  var check = apiCheckBooking(bookingData.duty_date);
   if (check.booked) {
     return {
       success: false,
@@ -401,9 +438,15 @@ function apiBookDuty(bookingData) {
 
   // Send LINE notification
   try {
-    const settings = getAllData('settings');
-    const autoSend = settings.find(s => s.key === 'auto_send_line');
-    if (autoSend && autoSend.value === 'true') {
+    var settings = getAllData('settings');
+    var autoSend = null;
+    for (var s = 0; s < settings.length; s++) {
+      if (String(settings[s].key) === 'auto_send_line') {
+        autoSend = settings[s];
+        break;
+      }
+    }
+    if (autoSend && String(autoSend.value) === 'true') {
       sendLineNotification(bookingData);
     }
   } catch(e) {
@@ -424,44 +467,46 @@ function apiDeleteBooking(bookingId) {
 // ============ API: CALENDAR ============
 
 function apiGetCalendar(year, month) {
-  const christianYear = parseInt(year) - BUDGET_OFFSET;
-  const monthNum = parseInt(month);
-  const firstDay = new Date(christianYear, monthNum - 1, 1);
-  const lastDay = new Date(christianYear, monthNum, 0);
-  const daysInMonth = lastDay.getDate();
-  const startDayOfWeek = firstDay.getDay(); // 0=Sun
+  var christianYear = parseInt(year) - BUDGET_OFFSET;
+  var monthNum = parseInt(month);
+  var firstDay = new Date(christianYear, monthNum - 1, 1);
+  var lastDay = new Date(christianYear, monthNum, 0);
+  var daysInMonth = lastDay.getDate();
+  var startDayOfWeek = firstDay.getDay(); // 0=Sun
 
   // Get holidays
-  const holidays = apiGetMonthHolidays(year, month);
-  const holidayMap = {};
-  holidays.forEach(h => { holidayMap[h.date] = h; });
+  var holidays = apiGetMonthHolidays(year, month);
+  var holidayMap = {};
+  for (var h = 0; h < holidays.length; h++) {
+    holidayMap[holidays[h].date] = holidays[h];
+  }
 
   // Get bookings
-  const bookings = apiGetBookings(year, month);
-  const bookingMap = {};
-  bookings.forEach(b => {
-    const dateStr = String(b.duty_date).substring(0, 10);
-    bookingMap[dateStr] = b;
-  });
+  var bookings = apiGetBookings(year, month);
+  var bookingMap = {};
+  for (var b = 0; b < bookings.length; b++) {
+    var bDateStr = String(bookings[b].duty_date).substring(0, 10);
+    bookingMap[bDateStr] = bookings[b];
+  }
 
   // Build calendar
-  const days = [];
-  let workingDays = 0;
-  let weekendDays = 0;
-  let holidayDays = 0;
+  var days = [];
+  var workingDays = 0;
+  var weekendDays = 0;
+  var nationalHolidayDays = 0;
 
   // Empty cells before first day
-  for (let i = 0; i < startDayOfWeek; i++) {
+  for (var i = 0; i < startDayOfWeek; i++) {
     days.push(null);
   }
 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(christianYear, monthNum - 1, d);
-    const dateStr = formatDateKey(date);
-    const dayOfWeek = date.getDay();
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    const holiday = holidayMap[dateStr];
-    const booking = bookingMap[dateStr];
+  for (var d = 1; d <= daysInMonth; d++) {
+    var date = new Date(christianYear, monthNum - 1, d);
+    var dateStr = formatDateKey(date);
+    var dayOfWeek = date.getDay();
+    var isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    var holiday = holidayMap[dateStr] || null;
+    var booking = bookingMap[dateStr] || null;
 
     days.push({
       day: d,
@@ -472,16 +517,17 @@ function apiGetCalendar(year, month) {
       isHoliday: !!holiday,
       holidayName: holiday ? holiday.name : '',
       holidayType: holiday ? holiday.type : '',
-      booking: booking || null,
+      booking: booking,
       isBooked: !!booking,
       bookedBy: booking ? booking.booked_by : '',
       shiftId: booking ? booking.shift_type : '',
       bookingId: booking ? booking.booking_id : ''
     });
 
-    if (isWeekend || holiday) {
-      holidayDays++;
-      if (isWeekend) weekendDays++;
+    if (isWeekend) {
+      weekendDays++;
+    } else if (holiday && holiday.type === 'national_holiday') {
+      nationalHolidayDays++;
     } else {
       workingDays++;
     }
@@ -495,7 +541,7 @@ function apiGetCalendar(year, month) {
     days: days,
     workingDays: workingDays,
     weekendDays: weekendDays,
-    holidayDays: holidayDays,
+    nationalHolidayDays: nationalHolidayDays,
     totalDays: daysInMonth
   };
 }
@@ -503,9 +549,9 @@ function apiGetCalendar(year, month) {
 // ============ API: HOLIDAYS ============
 
 function apiGetHolidays(year) {
-  const allHolidays = getAllData('holidays');
+  var allHolidays = getAllData('holidays');
   if (year) {
-    return allHolidays.filter(h => String(h.year) === String(year));
+    return allHolidays.filter(function(h) { return String(h.year) === String(year); });
   }
   return allHolidays;
 }
@@ -523,17 +569,17 @@ function apiDeleteHoliday(date) {
 }
 
 function apiGetMonthHolidays(year, month) {
-  const christianYear = parseInt(year) - BUDGET_OFFSET;
-  const allHolidays = getAllData('holidays');
-  const prefix = christianYear + '-' + String(parseInt(month)).padStart(2, '0');
-  const daysInMonth = new Date(christianYear, parseInt(month), 0).getDate();
-  const holidays = [];
+  var christianYear = parseInt(year) - BUDGET_OFFSET;
+  var allHolidays = getAllData('holidays');
+  var prefix = christianYear + '-' + ('0' + parseInt(month)).slice(-2);
+  var daysInMonth = new Date(christianYear, parseInt(month), 0).getDate();
+  var holidays = [];
 
   // Weekend holidays
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(christianYear, parseInt(month) - 1, d);
-    const dayOfWeek = date.getDay();
-    const dateStr = formatDateKey(date);
+  for (var d = 1; d <= daysInMonth; d++) {
+    var date = new Date(christianYear, parseInt(month) - 1, d);
+    var dayOfWeek = date.getDay();
+    var dateStr = formatDateKey(date);
     if (dayOfWeek === 0 || dayOfWeek === 6) {
       holidays.push({
         date: dateStr,
@@ -544,12 +590,12 @@ function apiGetMonthHolidays(year, month) {
   }
 
   // National holidays from sheet
-  allHolidays.forEach(h => {
-    const hDate = String(h.holiday_date).substring(0, 10);
-    if (hDate.startsWith(prefix) && h.holiday_type === 'national_holiday') {
-      holidays.push({ date: hDate, name: h.holiday_name, type: 'national_holiday' });
+  for (var h = 0; h < allHolidays.length; h++) {
+    var hDate = String(allHolidays[h].holiday_date).substring(0, 10);
+    if (hDate.substring(0, 7) === prefix && String(allHolidays[h].holiday_type) === 'national_holiday') {
+      holidays.push({ date: hDate, name: allHolidays[h].holiday_name, type: 'national_holiday' });
     }
-  });
+  }
 
   return holidays;
 }
@@ -561,11 +607,15 @@ function apiGetNotifications() {
 }
 
 function apiSetNotification(data) {
-  const existing = getAllData('notifications');
-  const match = existing.find(n =>
-    String(n.user_id) === String(data.user_id) &&
-    String(n.shift_type) === String(data.shift_type)
-  );
+  var existing = getAllData('notifications');
+  var match = null;
+  for (var i = 0; i < existing.length; i++) {
+    if (String(existing[i].user_id) === String(data.user_id) &&
+        String(existing[i].shift_type) === String(data.shift_type)) {
+      match = existing[i];
+      break;
+    }
+  }
   if (match) {
     return { success: updateRow('notifications', 'notif_id', match.notif_id, { is_active: data.is_active }) };
   }
@@ -597,8 +647,14 @@ function apiGetSettings() {
 }
 
 function apiUpdateSetting(key, value) {
-  const settings = getAllData('settings');
-  const exists = settings.find(s => String(s.key) === String(key));
+  var settings = getAllData('settings');
+  var exists = null;
+  for (var i = 0; i < settings.length; i++) {
+    if (String(settings[i].key) === String(key)) {
+      exists = settings[i];
+      break;
+    }
+  }
   if (exists) {
     return { success: updateRow('settings', 'key', key, { value: value }) };
   }
@@ -609,17 +665,21 @@ function apiUpdateSetting(key, value) {
 // ============ API: ANALYSIS ============
 
 function apiGetDocDutyUsers(year, month) {
-  const bookings = apiGetBookings(year, month);
+  var bookings = apiGetBookings(year, month);
   // Filter doc duty bookings
-  const docBookings = bookings.filter(b => {
-    const st = String(b.shift_type);
-    return st === 'SHIFT_DOC_NORMAL' || st === 'SHIFT_DOC_WEEKEND';
-  });
+  var docBookings = [];
+  for (var i = 0; i < bookings.length; i++) {
+    var st = String(bookings[i].shift_type);
+    if (st === 'SHIFT_DOC_NORMAL' || st === 'SHIFT_DOC_WEEKEND') {
+      docBookings.push(bookings[i]);
+    }
+  }
 
   // Get unique users with their dates
-  const userMap = {};
-  docBookings.forEach(b => {
-    const uid = String(b.user_id);
+  var userMap = {};
+  for (var i = 0; i < docBookings.length; i++) {
+    var b = docBookings[i];
+    var uid = String(b.user_id);
     if (!userMap[uid]) {
       userMap[uid] = {
         user_id: uid,
@@ -628,55 +688,69 @@ function apiGetDocDutyUsers(year, month) {
       };
     }
     userMap[uid].dates.push(String(b.duty_date).substring(0, 10));
-  });
+  }
 
-  const users = Object.values(userMap);
-  users.forEach(u => u.dates.sort());
+  var users = Object.keys(userMap).map(function(k) { return userMap[k]; });
+  for (var u = 0; u < users.length; u++) {
+    users[u].dates.sort();
+  }
   return users;
 }
 
 function apiAnalyzeDocDuty(userId, year, month) {
-  const bookings = apiGetBookings(year, month);
-  const shifts = getAllData('duty_shifts');
+  var bookings = apiGetBookings(year, month);
+  var shifts = getAllData('duty_shifts');
 
   // Get user's doc duty bookings
-  const userBookings = bookings.filter(b => {
-    const st = String(b.shift_type);
-    return String(b.user_id) === String(userId) &&
-      (st === 'SHIFT_DOC_NORMAL' || st === 'SHIFT_DOC_WEEKEND');
-  });
+  var userBookings = [];
+  for (var i = 0; i < bookings.length; i++) {
+    var st = String(bookings[i].shift_type);
+    if (String(bookings[i].user_id) === String(userId) &&
+        (st === 'SHIFT_DOC_NORMAL' || st === 'SHIFT_DOC_WEEKEND')) {
+      userBookings.push(bookings[i]);
+    }
+  }
 
   if (userBookings.length === 0) {
     return { dates: [], total_projects: 0, projects_per_day: 0 };
   }
 
   // Sort by date
-  userBookings.sort((a, b) => String(a.duty_date).localeCompare(String(b.duty_date)));
+  userBookings.sort(function(a, b) { return String(a.duty_date).localeCompare(String(b.duty_date)); });
 
   // Get EGP projects
-  const allEgp = getAllData('egp');
-  const projects = allEgp.map(p => String(p.project_no)).filter(Boolean);
-  const totalProjects = projects.length;
+  var allEgp = getAllData('egp');
+  var projects = [];
+  for (var e = 0; e < allEgp.length; e++) {
+    var pno = String(allEgp[e].project_no);
+    if (pno && pno.trim() !== '') projects.push(pno);
+  }
+  var totalProjects = projects.length;
 
-  // Distribution logic: total / 6 (since 1 person has 6 days)
-  const numDays = userBookings.length;
-  const projectsPerDay = numDays > 0 ? Math.ceil(totalProjects / numDays) : 0;
-
-  const result = userBookings.map((booking, idx) => {
-    const dateStr = String(booking.duty_date).substring(0, 10);
-    const dateObj = parseDateString(dateStr);
-    const dayOfWeek = dateObj ? dateObj.getDay() : -1;
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+  // Distribution logic: 6 projects per day
+  var result = [];
+  for (var idx = 0; idx < userBookings.length; idx++) {
+    var booking = userBookings[idx];
+    var dateStr = String(booking.duty_date).substring(0, 10);
+    var dateObj = parseDateString(dateStr);
+    var dayOfWeek = dateObj ? dateObj.getDay() : -1;
+    var isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
     // Determine shift type
-    const shiftId = isWeekend ? 'SHIFT_DOC_WEEKEND' : 'SHIFT_DOC_NORMAL';
-    const shiftInfo = shifts.find(s => String(s.shift_id) === shiftId);
+    var shiftId = isWeekend ? 'SHIFT_DOC_WEEKEND' : 'SHIFT_DOC_NORMAL';
+    var shiftInfo = null;
+    for (var s = 0; s < shifts.length; s++) {
+      if (String(shifts[s].shift_id) === shiftId) {
+        shiftInfo = shifts[s];
+        break;
+      }
+    }
 
     // Distribute projects: 6 projects per day cycle
-    const startIdx = idx * 6;
-    const dayProjects = projects.slice(startIdx, startIdx + 6);
+    var startIdx = idx * 6;
+    var dayProjects = projects.slice(startIdx, startIdx + 6);
 
-    return {
+    result.push({
       date: dateStr,
       dateThai: dateObj ? formatDateNumeric(dateObj) : dateStr,
       dateThaiLong: dateObj ? formatDateThai(dateObj) : dateStr,
@@ -688,57 +762,75 @@ function apiAnalyzeDocDuty(userId, year, month) {
       hours: shiftInfo ? parseInt(shiftInfo.hours) : 0,
       projects: dayProjects,
       project_count: dayProjects.length
-    };
-  });
+    });
+  }
+
+  var totalHours = 0;
+  var totalProjectWork = 0;
+  for (var r = 0; r < result.length; r++) {
+    totalHours += result[r].hours;
+    totalProjectWork += result[r].project_count;
+  }
 
   return {
     dates: result,
     total_projects: totalProjects,
     projects_per_day: 6,
-    total_hours: result.reduce((s, d) => s + d.hours, 0),
-    total_project_work: result.reduce((s, d) => s + d.project_count, 0)
+    total_hours: totalHours,
+    total_project_work: totalProjectWork
   };
 }
 
 // ============ API: REPORTS ============
 
 function apiGetMonthlyReport(year, month) {
-  const bookings = apiGetBookings(year, month);
-  const users = getAllData('users');
-  const shifts = getAllData('duty_shifts');
+  var bookings = apiGetBookings(year, month);
+  var users = getAllData('users');
+  var shifts = getAllData('duty_shifts');
+
+  var reportBookings = [];
+  for (var i = 0; i < bookings.length; i++) {
+    var b = bookings[i];
+    var shift = null;
+    for (var s = 0; s < shifts.length; s++) {
+      if (String(shifts[s].shift_id) === String(b.shift_type)) {
+        shift = shifts[s];
+        break;
+      }
+    }
+    reportBookings.push({
+      booking_id: b.booking_id,
+      duty_date: b.duty_date,
+      shift_type: b.shift_type,
+      user_id: b.user_id,
+      booked_by: b.booked_by,
+      shift_name: shift ? shift.shift_name : String(b.shift_type),
+      shift_type_name: shift ? shift.shift_type : '',
+      time_start: shift ? shift.time_start : '',
+      time_end: shift ? shift.time_end : '',
+      hours: shift ? shift.hours : 0,
+      notes: b.notes || ''
+    });
+  }
 
   return {
     year: year,
     month: month,
     thaiYear: parseInt(year),
-    bookings: bookings.map(b => {
-      const shift = shifts.find(s => String(s.shift_id) === String(b.shift_type));
-      return {
-        booking_id: b.booking_id,
-        duty_date: b.duty_date,
-        shift_type: b.shift_type,
-        user_id: b.user_id,
-        booked_by: b.booked_by,
-        shift_name: shift ? shift.shift_name : String(b.shift_type),
-        shift_type_name: shift ? shift.shift_type : '',
-        time_start: shift ? shift.time_start : '',
-        time_end: shift ? shift.time_end : '',
-        hours: shift ? shift.hours : 0,
-        notes: b.notes || ''
-      };
-    })
+    bookings: reportBookings
   };
 }
 
 function apiGetPaymentReport(year, month) {
-  const bookings = apiGetBookings(year, month);
-  const users = getAllData('users');
-  const shifts = getAllData('duty_shifts');
+  var bookings = apiGetBookings(year, month);
+  var users = getAllData('users');
+  var shifts = getAllData('duty_shifts');
 
   // Group by user
-  const userSummary = {};
-  bookings.forEach(b => {
-    const uid = String(b.user_id);
+  var userSummary = {};
+  for (var i = 0; i < bookings.length; i++) {
+    var b = bookings[i];
+    var uid = String(b.user_id);
     if (!userSummary[uid]) {
       userSummary[uid] = {
         user_id: uid,
@@ -753,13 +845,25 @@ function apiGetPaymentReport(year, month) {
       };
     }
 
-    const shift = shifts.find(s => String(s.shift_id) === String(b.shift_type));
-    const hours = shift ? parseInt(shift.hours) : 0;
-    const multiplier = shift ? parseFloat(shift.rate_multiplier) : 1;
+    var shift = null;
+    for (var s = 0; s < shifts.length; s++) {
+      if (String(shifts[s].shift_id) === String(b.shift_type)) {
+        shift = shifts[s];
+        break;
+      }
+    }
+    var hours = shift ? parseInt(shift.hours) : 0;
+    var multiplier = shift ? parseFloat(shift.rate_multiplier) : 1;
 
-    const user = users.find(u => String(u.user_id) === uid);
-    const ratePerHour = user ? parseFloat(user.rate_per_hour) || 0 : 0;
-    const payment = hours * ratePerHour * multiplier;
+    var user = null;
+    for (var u = 0; u < users.length; u++) {
+      if (String(users[u].user_id) === uid) {
+        user = users[u];
+        break;
+      }
+    }
+    var ratePerHour = user ? parseFloat(user.rate_per_hour) || 0 : 0;
+    var payment = hours * ratePerHour * multiplier;
 
     userSummary[uid].total_hours += hours;
     userSummary[uid].total_payment += payment;
@@ -779,67 +883,93 @@ function apiGetPaymentReport(year, month) {
       multiplier: multiplier,
       payment: payment
     });
-  });
+  }
 
   return {
     year: year,
     month: month,
     thaiYear: parseInt(year),
-    summary: Object.values(userSummary)
+    summary: Object.keys(userSummary).map(function(k) { return userSummary[k]; })
   };
 }
 
 function apiGetMyDuty(userId, year, month) {
-  const bookings = apiGetBookings(year, month);
-  const shifts = getAllData('duty_shifts');
+  var bookings = apiGetBookings(year, month);
+  var shifts = getAllData('duty_shifts');
 
-  const myBookings = bookings.filter(b => String(b.user_id) === String(userId));
+  var myBookings = [];
+  for (var i = 0; i < bookings.length; i++) {
+    if (String(bookings[i].user_id) === String(userId)) {
+      myBookings.push(bookings[i]);
+    }
+  }
+
+  var normalCount = 0, weekendCount = 0, docNormalCount = 0, docWeekendCount = 0, totalHours = 0;
+  var reportBookings = [];
+
+  for (var i = 0; i < myBookings.length; i++) {
+    var b = myBookings[i];
+    var shift = null;
+    for (var s = 0; s < shifts.length; s++) {
+      if (String(shifts[s].shift_id) === String(b.shift_type)) {
+        shift = shifts[s];
+        break;
+      }
+    }
+
+    if (String(b.shift_type) === 'SHIFT_NORMAL') normalCount++;
+    else if (String(b.shift_type) === 'SHIFT_WEEKEND') weekendCount++;
+    else if (String(b.shift_type) === 'SHIFT_DOC_NORMAL') docNormalCount++;
+    else if (String(b.shift_type) === 'SHIFT_DOC_WEEKEND') docWeekendCount++;
+
+    if (shift) totalHours += parseInt(shift.hours);
+
+    reportBookings.push({
+      booking_id: b.booking_id,
+      duty_date: b.duty_date,
+      shift_type: b.shift_type,
+      booked_by: b.booked_by,
+      shift_name: shift ? shift.shift_name : String(b.shift_type),
+      shift_type_name: shift ? shift.shift_type : '',
+      hours: shift ? parseInt(shift.hours) : 0,
+      time_start: shift ? shift.time_start : '',
+      time_end: shift ? shift.time_end : '',
+      notes: b.notes || ''
+    });
+  }
 
   return {
     user_id: userId,
-    bookings: myBookings.map(b => {
-      const shift = shifts.find(s => String(s.shift_id) === String(b.shift_type));
-      return {
-        booking_id: b.booking_id,
-        duty_date: b.duty_date,
-        shift_type: b.shift_type,
-        booked_by: b.booked_by,
-        shift_name: shift ? shift.shift_name : String(b.shift_type),
-        shift_type_name: shift ? shift.shift_type : '',
-        hours: shift ? parseInt(shift.hours) : 0,
-        time_start: shift ? shift.time_start : '',
-        time_end: shift ? shift.time_end : '',
-        notes: b.notes || ''
-      };
-    }),
-    normal_days: myBookings.filter(b => String(b.shift_type) === 'SHIFT_NORMAL'),
-    weekend_days: myBookings.filter(b => String(b.shift_type) === 'SHIFT_WEEKEND'),
-    doc_normal_days: myBookings.filter(b => String(b.shift_type) === 'SHIFT_DOC_NORMAL'),
-    doc_weekend_days: myBookings.filter(b => String(b.shift_type) === 'SHIFT_DOC_WEEKEND'),
+    bookings: reportBookings,
+    normal_days: normalCount,
+    weekend_days: weekendCount,
+    doc_normal_days: docNormalCount,
+    doc_weekend_days: docWeekendCount,
     total_days: myBookings.length,
-    total_hours: myBookings.reduce((sum, b) => {
-      const shift = shifts.find(s => String(s.shift_id) === String(b.shift_type));
-      return sum + (shift ? parseInt(shift.hours) : 0);
-    }, 0)
+    total_hours: totalHours
   };
 }
 
 // ============ API: DOC DUTY ATTACHMENT (เอกสารแนบเวรเอกสาร) ============
 
 function apiGetDocDutyAttachment(year, month) {
-  const bookings = apiGetBookings(year, month);
-  const shifts = getAllData('duty_shifts');
+  var bookings = apiGetBookings(year, month);
+  var shifts = getAllData('duty_shifts');
 
   // Filter only doc duty
-  const docBookings = bookings.filter(b => {
-    const st = String(b.shift_type);
-    return st === 'SHIFT_DOC_NORMAL' || st === 'SHIFT_DOC_WEEKEND';
-  });
+  var docBookings = [];
+  for (var i = 0; i < bookings.length; i++) {
+    var st = String(bookings[i].shift_type);
+    if (st === 'SHIFT_DOC_NORMAL' || st === 'SHIFT_DOC_WEEKEND') {
+      docBookings.push(bookings[i]);
+    }
+  }
 
   // Get unique users
-  const userMap = {};
-  docBookings.forEach(b => {
-    const uid = String(b.user_id);
+  var userMap = {};
+  for (var i = 0; i < docBookings.length; i++) {
+    var b = docBookings[i];
+    var uid = String(b.user_id);
     if (!userMap[uid]) {
       userMap[uid] = {
         user_id: uid,
@@ -848,31 +978,44 @@ function apiGetDocDutyAttachment(year, month) {
       };
     }
     userMap[uid].dates.push(String(b.duty_date).substring(0, 10));
-  });
+  }
 
   // Get EGP projects
-  const allEgp = getAllData('egp');
-  const projects = allEgp.map(p => String(p.project_no)).filter(Boolean);
-  const totalProjects = projects.length;
+  var allEgp = getAllData('egp');
+  var projects = [];
+  for (var e = 0; e < allEgp.length; e++) {
+    var pno = String(allEgp[e].project_no);
+    if (pno && pno.trim() !== '') projects.push(pno);
+  }
+  var totalProjects = projects.length;
 
   // Analyze each user
-  const users = Object.values(userMap);
-  const result = users.map(user => {
+  var userKeys = Object.keys(userMap);
+  var result = [];
+  for (var u = 0; u < userKeys.length; u++) {
+    var user = userMap[userKeys[u]];
     user.dates.sort();
-    const numDays = user.dates.length;
-    const projectsPerDay = numDays > 0 ? Math.ceil(totalProjects / numDays) : 0;
+    var numDays = user.dates.length;
 
-    const dayDetails = user.dates.map((dateStr, idx) => {
-      const dateObj = parseDateString(dateStr);
-      const dayOfWeek = dateObj ? dateObj.getDay() : -1;
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      const shiftId = isWeekend ? 'SHIFT_DOC_WEEKEND' : 'SHIFT_DOC_NORMAL';
-      const shiftInfo = shifts.find(s => String(s.shift_id) === shiftId);
+    var dayDetails = [];
+    for (var idx = 0; idx < user.dates.length; idx++) {
+      var dateStr = user.dates[idx];
+      var dateObj = parseDateString(dateStr);
+      var dayOfWeek = dateObj ? dateObj.getDay() : -1;
+      var isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      var shiftId = isWeekend ? 'SHIFT_DOC_WEEKEND' : 'SHIFT_DOC_NORMAL';
+      var shiftInfo = null;
+      for (var s = 0; s < shifts.length; s++) {
+        if (String(shifts[s].shift_id) === shiftId) {
+          shiftInfo = shifts[s];
+          break;
+        }
+      }
 
-      const startIdx = idx * 6;
-      const dayProjects = projects.slice(startIdx, startIdx + 6);
+      var startIdx = idx * 6;
+      var dayProjects = projects.slice(startIdx, startIdx + 6);
 
-      return {
+      dayDetails.push({
         date: dateStr,
         dateThai: dateObj ? formatDateNumeric(dateObj) : dateStr,
         dayName: ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'][dayOfWeek],
@@ -882,18 +1025,25 @@ function apiGetDocDutyAttachment(year, month) {
         hours: shiftInfo ? parseInt(shiftInfo.hours) : 0,
         projects: dayProjects,
         project_count: dayProjects.length
-      };
-    });
+      });
+    }
 
-    return {
+    var dayTotalHours = 0;
+    var dayTotalProjects = 0;
+    for (var dd = 0; dd < dayDetails.length; dd++) {
+      dayTotalHours += dayDetails[dd].hours;
+      dayTotalProjects += dayDetails[dd].project_count;
+    }
+
+    result.push({
       user_id: user.user_id,
       booked_by: user.booked_by,
       total_days: numDays,
       day_details: dayDetails,
-      total_hours: dayDetails.reduce((s, d) => s + d.hours, 0),
-      total_projects: dayDetails.reduce((s, d) => s + d.project_count, 0)
-    };
-  });
+      total_hours: dayTotalHours,
+      total_projects: dayTotalProjects
+    });
+  }
 
   return {
     year: year,
@@ -907,38 +1057,43 @@ function apiGetDocDutyAttachment(year, month) {
 // ============ LINE NOTIFICATION ============
 
 function sendLineNotification(bookingData) {
-  const settings = getAllData('settings');
-  const tokenSetting = settings.find(s => String(s.key) === 'line_channel_access_token');
-  const token = tokenSetting ? tokenSetting.value : '';
-  const groupId = settings.find(s => String(s.key) === 'line_notify_group_id');
-  const targetId = groupId ? groupId.value : '';
+  var settings = getAllData('settings');
+  var token = '';
+  var targetId = '';
+  for (var i = 0; i < settings.length; i++) {
+    if (String(settings[i].key) === 'line_channel_access_token') token = settings[i].value;
+    if (String(settings[i].key) === 'line_notify_group_id') targetId = settings[i].value;
+  }
 
   if (!token || !targetId) {
     Logger.log('LINE: Token or target ID not configured');
     return;
   }
 
-  const shifts = getAllData('duty_shifts');
-  const shift = shifts.find(s => String(s.shift_id) === String(bookingData.shift_type));
-  const shiftName = shift ? shift.shift_name : String(bookingData.shift_type);
-  const shiftTime = shift ? shift.time_start + ' - ' + shift.time_end : '';
+  var shifts = getAllData('duty_shifts');
+  var shift = null;
+  for (var s = 0; s < shifts.length; s++) {
+    if (String(shifts[s].shift_id) === String(bookingData.shift_type)) {
+      shift = shifts[s];
+      break;
+    }
+  }
+  var shiftName = shift ? shift.shift_name : String(bookingData.shift_type);
+  var shiftTime = shift ? shift.time_start + ' - ' + shift.time_end : '';
 
-  const dateObj = parseDateString(bookingData.duty_date);
-  const dateThai = dateObj ? formatDateThai(dateObj) : String(bookingData.duty_date);
+  var dateObj = parseDateString(bookingData.duty_date);
+  var dateThai = dateObj ? formatDateThai(dateObj) : String(bookingData.duty_date);
 
-  const message = [
-    '📋 แจ้งเตือนการจองเวร - ห้องยาสบปราบ',
-    '',
-    '👤 ผู้จอง: ' + bookingData.booked_by,
-    '📅 วันที่: ' + dateThai,
-    '🔄 ประเภทเวร: ' + shiftName,
-    '⏰ เวลา: ' + shiftTime,
-    ''
-  ].join('\n');
+  var message = '📋 แจ้งเตือนการจองเวร - ห้องยาสบปราบ\n' +
+    '\n' +
+    '👤 ผู้จอง: ' + bookingData.booked_by + '\n' +
+    '📅 วันที่: ' + dateThai + '\n' +
+    '🔄 ประเภทเวร: ' + shiftName + '\n' +
+    '⏰ เวลา: ' + shiftTime;
 
   try {
-    const url = 'https://api.line.me/v2/bot/message/push';
-    const options = {
+    var url = 'https://api.line.me/v2/bot/message/push';
+    var options = {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -950,7 +1105,7 @@ function sendLineNotification(bookingData) {
       }),
       muteHttpExceptions: true
     };
-    const response = UrlFetchApp.fetch(url, options);
+    var response = UrlFetchApp.fetch(url, options);
     Logger.log('LINE response: ' + response.getResponseCode());
   } catch(e) {
     Logger.log('LINE API Error: ' + e.message);
@@ -971,11 +1126,11 @@ function doGet(e) {
 
 function doPost(e) {
   try {
-    const params = JSON.parse(e.postData.contents);
-    const action = params.action;
-    const data = params.data || {};
+    var params = JSON.parse(e.postData.contents);
+    var action = params.action;
+    var data = params.data || {};
 
-    let result;
+    var result;
     switch(action) {
       case 'login': result = apiLogin(data.fullname, data.password); break;
       case 'getUsers': result = apiGetUsers(); break;
