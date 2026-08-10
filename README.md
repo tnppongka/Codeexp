@@ -110,6 +110,7 @@
 | ประเภทเวร | ดู/แก้ไข ประเภทเวร อัตราคูณ เปิด/ปิดแจ้งเตือน |
 | การแจ้งเตือน | ตั้งค่าว่า User ใด + ประเภทเวรใด ส่งแจ้งเตือน LINE หรือไม่ |
 | วันหยุด | เพิ่ม/ลบ วันหยุดนักขัตฤกษ์ (รองรับหลายปี) |
+| เลขโครงการ | จัดการเลขที่โครงการ (EGP) - เพิ่ม/ลบ |
 | ตั้งค่าระบบ | LINE Token, Group ID, ชื่อหน่วยงาน, เปิด/ปิดแจ้งเตือนอัตโนมัติ |
 
 ### 3. รายงาน
@@ -186,8 +187,8 @@ duty-rotation-system/
 ├── gas/
 │   ├── Code.gs          ← Backend (API + Business Logic + LINE Notify)
 │   ├── index.html       ← Frontend (UI + SPA + PWA)
-│   └── manifest.json    ← PWA Manifest
-├── README.md            ← คู่มือนี
+│   └── manifest.json    ← PWA Manifest (อ้างอิงผ่าน data URI ใน index.html)
+├── README.md            ← คู่มือ (PWA manifest ฝังใน index.html)
 └── dev-notes.md         ← บันทึกการพัฒนา
 ```
 

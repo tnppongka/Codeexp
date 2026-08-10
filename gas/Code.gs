@@ -198,7 +198,7 @@ function initializeSheets() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
   // --- 1. users ---
-  let s = ss.getSheetByName('users');
+  var s = ss.getSheetByName('users');
   if (!s) {
     s = ss.insertSheet('users');
     s.getRange(1, 1, 1, 7).setValues([['user_id','fullname','position','rate_per_hour','line_user_id','is_admin','password']]);
@@ -236,7 +236,7 @@ function initializeSheets() {
     s = ss.insertSheet('holidays');
     s.getRange(1, 1, 1, 4).setValues([['holiday_date','holiday_name','holiday_type','year']]);
     // วันหยุดนักขัตฤกษ์ พ.ศ. 2568
-    const hol = [
+    var hol = [
       ['2025-01-01','วันขึ้นปีใหม่','national_holiday',2568],
       ['2025-02-12','วันมาฆบูชา','national_holiday',2568],
       ['2025-04-06','วันจักรี','national_holiday',2568],
