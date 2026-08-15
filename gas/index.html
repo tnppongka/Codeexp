@@ -9,10 +9,11 @@
   <meta name="apple-mobile-web-app-title" content="ระบบจัดตารางเวร">
   <title>ระบบจัดตารางเวร - ห้องยาสบปราบ</title>
   <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a365d' rx='16' width='100' height='100'/><text y='.85em' x='50' text-anchor='middle' font-size='60'>📋</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <style>
+    /* ===== CSS CUSTOM PROPERTIES ===== */
     :root {
       --primary: #1a365d;
       --primary-light: #2c5282;
@@ -26,29 +27,34 @@
       --text-lighter: #a0aec0;
       --border: #e2e8f0;
       --success: #38a169;
+      --success-light: #c6f6d5;
       --danger: #e53e3e;
+      --danger-light: #fed7d7;
       --warning: #dd6b20;
+      --warning-light: #feebc8;
+      --info: #3182ce;
+      --info-light: #bee3f8;
       --sidebar-width: 240px;
-      --sidebar-collapsed: 64px;
-      --header-height: 0px;
       --radius: 12px;
       --radius-sm: 8px;
+      --radius-xs: 4px;
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
       --shadow: 0 4px 6px rgba(0,0,0,0.07);
       --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
       --transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
     }
-    
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
     body {
       font-family: 'Sarabun', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    
+
     /* ===== LOGIN PAGE ===== */
     .login-page {
       min-height: 100vh;
@@ -59,7 +65,7 @@
       position: relative;
       overflow: hidden;
     }
-    
+
     .login-page::before {
       content: '';
       position: absolute;
@@ -67,88 +73,96 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle at 30% 70%, rgba(214, 158, 46, 0.1) 0%, transparent 50%);
+      background: radial-gradient(circle at 30% 70%, rgba(214,158,46,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 30%, rgba(44,82,130,0.15) 0%, transparent 40%);
       animation: float 20s ease-in-out infinite;
     }
-    
+
     @keyframes float {
       0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      50% { transform: translate(-20px, -20px) rotate(5deg); }
+      50% { transform: translate(-15px, -15px) rotate(3deg); }
     }
-    
+
     .login-card {
-      background: rgba(255,255,255,0.95);
+      background: rgba(255,255,255,0.97);
       backdrop-filter: blur(20px);
       border-radius: 20px;
-      padding: 48px 40px;
+      padding: 44px 36px;
       width: 100%;
       max-width: 400px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
       position: relative;
       z-index: 1;
     }
-    
+
     .login-card .logo {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
-    
+
     .login-card .logo-icon {
-      width: 64px;
-      height: 64px;
+      width: 56px;
+      height: 56px;
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 16px;
-      display: flex;
+      border-radius: 14px;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
-      color: white;
-      font-size: 28px;
+      margin-bottom: 12px;
     }
-    
-    .login-card .logo h1 {
-      font-size: 18px;
-      font-weight: 600;
+
+    .login-card .logo-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+
+    .login-card h1 {
+      font-size: 22px;
+      font-weight: 700;
       color: var(--primary);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
-    
-    .login-card .logo p {
-      font-size: 14px;
+
+    .login-card .subtitle {
+      font-size: 13px;
       color: var(--text-light);
     }
-    
+
     .login-form .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
-    
+
     .login-form label {
       display: block;
       font-size: 13px;
-      font-weight: 500;
-      color: var(--text-light);
+      font-weight: 600;
+      color: var(--text);
       margin-bottom: 6px;
     }
-    
-    .login-form input {
+
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
       width: 100%;
-      padding: 12px 16px;
+      padding: 12px 14px;
       border: 2px solid var(--border);
       border-radius: var(--radius-sm);
       font-family: 'Sarabun', sans-serif;
       font-size: 15px;
-      transition: var(--transition);
       outline: none;
+      transition: var(--transition);
+      background: #fafbfc;
     }
-    
+
     .login-form input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(26,54,93,0.1);
     }
-    
+
     .btn-login {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
       color: white;
       border: none;
@@ -160,150 +174,115 @@
       transition: var(--transition);
       margin-top: 8px;
     }
-    
-    .btn-login:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(26, 54, 93, 0.3);
-    }
-    
-    .btn-login:active { transform: scale(0.98); }
-    
+
+    .btn-login:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .btn-login:active { transform: translateY(0); }
+
     .login-error {
+      margin-top: 12px;
+      text-align: center;
       color: var(--danger);
       font-size: 13px;
-      text-align: center;
-      margin-top: 12px;
-      min-height: 20px;
+      min-height: 18px;
     }
-    
+
     /* ===== APP LAYOUT ===== */
     .app-layout {
       display: none;
       min-height: 100vh;
     }
-    
+
     .app-layout.active { display: flex; }
-    
-    /* Sidebar */
+
+    /* ===== SIDEBAR ===== */
     .sidebar {
       width: var(--sidebar-width);
-      background: var(--primary-dark);
+      background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
       color: white;
       position: fixed;
       top: 0;
       left: 0;
       height: 100vh;
+      z-index: 100;
       display: flex;
       flex-direction: column;
-      z-index: 100;
       transition: var(--transition);
-      overflow-y: auto;
+      overflow: hidden;
     }
-    
+
     .sidebar-header {
-      padding: 20px;
+      padding: 20px 16px 16px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-    
-    .sidebar-header .logo-small {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+
+    .sidebar-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
     }
-    
-    .sidebar-header .logo-small .icon {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-    
-    .sidebar-header .logo-small .text h3 {
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 1.3;
-    }
-    
-    .sidebar-header .logo-small .text p {
+
+    .sidebar-header p {
       font-size: 11px;
       opacity: 0.6;
     }
-    
+
     .sidebar-nav {
-      padding: 12px;
       flex: 1;
+      padding: 12px 0;
+      overflow-y: auto;
     }
-    
+
     .nav-item {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
+      padding: 11px 16px;
       cursor: pointer;
       transition: var(--transition);
-      margin-bottom: 4px;
       font-size: 14px;
+      font-weight: 500;
+      border-left: 3px solid transparent;
       color: rgba(255,255,255,0.7);
     }
-    
+
     .nav-item:hover {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
       color: white;
     }
-    
+
     .nav-item.active {
-      background: rgba(214, 158, 46, 0.2);
-      color: var(--accent-light);
-      font-weight: 500;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border-left-color: var(--accent);
     }
-    
-    .nav-item .material-icons-round {
-      font-size: 20px;
-    }
-    
+
+    .nav-item .material-icons-round { font-size: 20px; }
+
     .sidebar-footer {
-      padding: 16px 20px;
+      padding: 12px 16px;
       border-top: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .user-info {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    
+
     .user-avatar {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       background: var(--accent);
-      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--primary-dark);
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
     }
-    
+
     .user-details { flex: 1; min-width: 0; }
-    .user-details .name {
-      font-size: 13px;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .user-details .role {
-      font-size: 11px;
-      opacity: 0.6;
-    }
-    
+    .user-details .name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-details .role { font-size: 10px; opacity: 0.6; }
+
     .btn-logout {
       background: none;
       border: none;
@@ -313,31 +292,31 @@
       transition: var(--transition);
     }
     .btn-logout:hover { color: var(--danger); }
-    
-    /* Main Content */
+
+    /* ===== MAIN CONTENT ===== */
     .main-content {
       margin-left: var(--sidebar-width);
       flex: 1;
       min-height: 100vh;
       padding: 24px 28px;
     }
-    
+
     .page-header {
       margin-bottom: 24px;
     }
-    
+
     .page-header h2 {
       font-size: 22px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--primary);
       margin-bottom: 4px;
     }
-    
+
     .page-header p {
       font-size: 14px;
       color: var(--text-light);
     }
-    
+
     /* ===== CALENDAR PAGE ===== */
     .calendar-controls {
       display: flex;
@@ -346,7 +325,7 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
-    
+
     .calendar-controls select {
       padding: 8px 12px;
       border: 2px solid var(--border);
@@ -356,211 +335,121 @@
       outline: none;
       background: white;
       cursor: pointer;
+      transition: var(--transition);
     }
-    
-    .calendar-controls select:focus {
-      border-color: var(--primary);
-    }
-    
+
+    .calendar-controls select:focus { border-color: var(--primary); }
+
     .calendar-summary {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
-    
+
     .summary-card {
       background: white;
       border-radius: var(--radius-sm);
-      padding: 12px 18px;
+      padding: 14px 20px;
       box-shadow: var(--shadow-sm);
       display: flex;
       align-items: center;
       gap: 10px;
+      border: 1px solid var(--border);
     }
-    
-    .summary-card .num {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    
-    .summary-card .label {
-      font-size: 12px;
-      color: var(--text-light);
-    }
-    
+
+    .summary-card .num { font-size: 26px; font-weight: 700; color: var(--primary); }
+    .summary-card .label { font-size: 12px; color: var(--text-light); }
     .summary-card.working .num { color: var(--success); }
     .summary-card.weekend .num { color: var(--warning); }
     .summary-card.holiday .num { color: var(--danger); }
-    
+
     .calendar-grid {
       background: white;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
+      border: 1px solid var(--border);
     }
-    
+
     .calendar-header-row {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       background: var(--primary);
       color: white;
     }
-    
+
     .calendar-header-row .day-name {
       padding: 12px 8px;
       text-align: center;
       font-size: 13px;
       font-weight: 600;
     }
-    
-    .calendar-header-row .day-name.holiday-col {
-      background: rgba(229, 62, 62, 0.3);
-    }
-    
+
+    .calendar-header-row .day-name.holiday-col { background: rgba(229,62,62,0.25); }
+
     .calendar-body {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 1px;
       background: var(--border);
     }
-    
+
     .calendar-cell {
-      min-height: 90px;
+      min-height: 85px;
       background: white;
       padding: 6px 8px;
       position: relative;
       cursor: pointer;
       transition: var(--transition);
     }
-    
-    .calendar-cell:hover:not(.empty):not(.disabled) {
-      background: #f0f7ff;
-    }
-    
+
+    .calendar-cell:hover:not(.empty):not(.disabled) { background: #f0f7ff; }
+
     .calendar-cell.empty { background: #f8f9fa; cursor: default; }
-    
     .calendar-cell.weekend { background: #fef2f2; }
     .calendar-cell.holiday { background: #fff7ed; }
     .calendar-cell.booked { background: #f0fdf4; }
-    
+
     .calendar-cell .day-number {
       font-size: 14px;
       font-weight: 600;
       color: var(--text);
       margin-bottom: 2px;
     }
-    
+
     .calendar-cell.weekend .day-number { color: var(--danger); }
     .calendar-cell.holiday .day-number { color: var(--warning); }
-    
+
     .calendar-cell .holiday-name {
       font-size: 10px;
       color: var(--warning);
       line-height: 1.2;
       margin-bottom: 2px;
     }
-    
+
     .calendar-cell .booking-info {
       font-size: 10px;
       color: var(--success);
-      font-weight: 500;
+      font-weight: 600;
       line-height: 1.2;
-      margin-top: 2px;
-      padding: 2px 4px;
-      background: rgba(56, 161, 105, 0.1);
-      border-radius: 4px;
+      margin-top: 3px;
+      padding: 2px 6px;
+      background: rgba(56,161,105,0.1);
+      border-radius: var(--radius-xs);
     }
-    
+
     .calendar-cell .booking-info.booked-by-other {
       color: var(--text-light);
-      background: rgba(113, 128, 150, 0.1);
+      background: rgba(113,128,150,0.1);
     }
-    
-    .calendar-cell .disabled-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    /* ===== MODAL ===== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px;
-    }
-    
-    .modal-overlay.active { display: flex; }
-    
-    .modal {
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      width: 100%;
-      max-width: 480px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: var(--shadow-lg);
-      animation: modalIn 0.2s ease-out;
-    }
-    
-    @keyframes modalIn {
-      from { transform: scale(0.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    
-    .modal h3 {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 20px;
-    }
-    
-    .modal .form-group {
-      margin-bottom: 16px;
-    }
-    
-    .modal label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-light);
-      margin-bottom: 6px;
-    }
-    
-    .modal select, .modal input, .modal textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-family: 'Sarabun', sans-serif;
-      font-size: 14px;
-      outline: none;
-      transition: var(--transition);
-    }
-    
-    .modal select:focus, .modal input:focus, .modal textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
-    }
-    
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 24px;
-    }
-    
+
+    /* ===== BUTTONS ===== */
     .btn {
-      padding: 10px 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
       border: none;
       border-radius: var(--radius-sm);
       font-family: 'Sarabun', sans-serif;
@@ -568,40 +457,96 @@
       font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
+      text-decoration: none;
     }
-    
-    .btn:active { transform: scale(0.97); }
-    
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
+
+    .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { background: var(--primary-light); }
-    
-    .btn-secondary {
-      background: var(--bg);
-      color: var(--text);
-      border: 2px solid var(--border);
-    }
-    .btn-secondary:hover { background: var(--border); }
-    
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
+    .btn-secondary { background: #edf2f7; color: var(--text); }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-danger { background: var(--danger); color: white; }
     .btn-danger:hover { background: #c53030; }
-    
-    .btn-success {
-      background: var(--success);
-      color: white;
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #2f855a; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* ===== FORMS ===== */
+    .form-group { margin-bottom: 14px; }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 5px;
     }
-    
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
+
+    .form-group input[type="text"],
+    .form-group input[type="password"],
+    .form-group input[type="number"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+      background: #fafbfc;
     }
-    
-    /* ===== SETTINGS PAGE ===== */
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(26,54,93,0.08);
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius);
+      padding: 28px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-lg);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-content h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ===== SETTINGS / TABS ===== */
     .tabs {
       display: flex;
       gap: 4px;
@@ -609,7 +554,7 @@
       border-bottom: 2px solid var(--border);
       overflow-x: auto;
     }
-    
+
     .tab {
       padding: 10px 18px;
       font-size: 14px;
@@ -621,16 +566,14 @@
       white-space: nowrap;
       transition: var(--transition);
     }
-    
+
     .tab:hover { color: var(--text); }
-    .tab.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
-    
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    
+
+    /* ===== DATA TABLE ===== */
     .data-table {
       width: 100%;
       border-collapse: collapse;
@@ -638,30 +581,28 @@
       border-radius: var(--radius);
       overflow: hidden;
       box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
     }
-    
+
     .data-table th {
       background: var(--primary);
       color: white;
       padding: 12px 14px;
       text-align: left;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
     }
-    
+
     .data-table td {
       padding: 10px 14px;
       border-bottom: 1px solid var(--border);
       font-size: 14px;
     }
-    
+
     .data-table tr:hover td { background: #f8fafc; }
-    
-    .table-actions {
-      display: flex;
-      gap: 6px;
-    }
-    
+
+    .table-actions { display: flex; gap: 6px; }
+
     /* ===== REPORT PAGE ===== */
     .report-selector {
       display: flex;
@@ -669,60 +610,66 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
-    
-    .report-btn {
-      padding: 12px 20px;
-      background: white;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-family: 'Sarabun', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .report-btn:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-    
-    .report-btn.active {
-      border-color: var(--primary);
-      background: rgba(26, 54, 93, 0.05);
-      color: var(--primary);
-    }
-    
+
     .report-content {
       background: white;
       border-radius: var(--radius);
       padding: 32px;
       box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
     }
-    
+
+    .report-content h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .report-content .report-subtitle {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    /* ===== ANALYSIS CARD ===== */
+    .analysis-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .analysis-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
     /* ===== PRINT STYLES ===== */
     @media print {
-      .sidebar, .calendar-controls, .btn-print, .tabs, .report-selector, .nav-item, .sidebar-footer, .sidebar-header {
-        display: none !important;
-      }
+      body { background: white; }
+      .sidebar, .calendar-controls, .btn-print, .tabs, .report-selector,
+      .nav-item, .sidebar-footer, .sidebar-header, .btn, .mobile-header,
+      .toast, .modal-overlay, .page-header { display: none !important; }
       .main-content { margin-left: 0 !important; padding: 0 !important; }
-      .calendar-cell { min-height: 60px; }
+      .calendar-cell { min-height: 50px; font-size: 11px; }
+      .data-table th { background: #1a365d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      @page { size: A4; margin: 15mm; }
     }
-    
+
     /* ===== RESPONSIVE ===== */
+    .mobile-header { display: none; }
+
     @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
+      .sidebar { transform: translateX(-100%); z-index: 200; }
       .sidebar.open { transform: translateX(0); }
-      
-      .main-content {
-        margin-left: 0;
-        padding: 16px;
-      }
-      
+      .main-content { margin-left: 0; padding: 16px; }
       .mobile-header {
         display: flex !important;
         align-items: center;
@@ -734,7 +681,7 @@
         top: 0;
         z-index: 50;
       }
-      
+      .mobile-header .title { font-size: 16px; font-weight: 700; }
       .menu-toggle {
         background: none;
         border: none;
@@ -742,14 +689,13 @@
         font-size: 24px;
         cursor: pointer;
       }
-      
-      .calendar-cell { min-height: 60px; }
+      .calendar-cell { min-height: 55px; }
       .calendar-cell .day-number { font-size: 12px; }
       .calendar-cell .booking-info { font-size: 8px; }
+      .summary-card { padding: 10px 14px; }
+      .summary-card .num { font-size: 22px; }
     }
-    
-    .mobile-header { display: none; }
-    
+
     /* ===== TOAST ===== */
     .toast {
       position: fixed;
@@ -765,76 +711,90 @@
       opacity: 0;
       transition: var(--transition);
       font-size: 14px;
+      font-weight: 500;
     }
-    
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    
+    .toast.show { transform: translateY(0); opacity: 1; }
     .toast.error { background: var(--danger); }
     .toast.success { background: var(--success); }
-    
-    /* ===== ANALYSIS PAGE ===== */
-    .analysis-card {
-      background: white;
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 20px;
-    }
-    
-    .analysis-card h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 16px;
-    }
-    
-    /* Loading */
-    .loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      color: var(--text-light);
-    }
-    
+
+    /* ===== LOADING & EMPTY ===== */
+    .loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-light); }
     .spinner {
-      width: 24px;
-      height: 24px;
+      width: 24px; height: 24px;
       border: 3px solid var(--border);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin-right: 10px;
     }
-    
     @keyframes spin { to { transform: rotate(360deg); } }
-    
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-light);
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+    .empty-state .material-icons-round { font-size: 48px; opacity: 0.4; margin-bottom: 12px; }
+
+    /* ===== SIDEBAR OVERLAY (mobile) ===== */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 150;
     }
-    
-    .empty-state .material-icons-round {
-      font-size: 48px;
-      opacity: 0.4;
-      margin-bottom: 12px;
+    .sidebar-overlay.active { display: block; }
+
+    /* ===== CHIPS / TAGS ===== */
+    .chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
     }
+    .chip-normal { background: #ebf8ff; color: var(--info); }
+    .chip-weekend { background: #fff5f5; color: var(--danger); }
+    .chip-holiday { background: #fffaf0; color: var(--warning); }
+    .chip-doc { background: #f0fff4; color: var(--success); }
+
+    /* ===== SWITCH ===== */
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #cbd5e0;
+      transition: var(--transition);
+      border-radius: 24px;
+    }
+    .switch .slider::before {
+      content: '';
+      position: absolute;
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background: white;
+      transition: var(--transition);
+      border-radius: 50%;
+    }
+    .switch input:checked + .slider { background: var(--success); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN PAGE -->
+  <!-- ===== LOGIN PAGE ===== -->
   <div class="login-page" id="loginPage">
     <div class="login-card">
       <div class="logo">
-        <div class="logo-icon">📋</div>
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        </div>
         <h1>ระบบจัดตารางเวร</h1>
-        <p>ห้องยาสบปราบ</p>
+        <p class="subtitle">ห้องยาสบปราบ</p>
       </div>
       <form class="login-form" id="loginForm">
         <div class="form-group">
@@ -851,124 +811,109 @@
     </div>
   </div>
 
-  <!-- APP LAYOUT -->
+  <!-- ===== APP LAYOUT ===== -->
   <div class="app-layout" id="appLayout">
-    <!-- Mobile Header -->
-    <div class="mobile-header">
-      <button class="menu-toggle material-icons-round" onclick="toggleSidebar()">menu</button>
-      <span style="font-weight:600;">ระบบจัดตารางเวร</span>
-      <div style="width:24px;"></div>
-    </div>
-    
-    <!-- Sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <div class="logo-small">
-          <div class="icon">📋</div>
-          <div class="text">
-            <h3>ระบบจัดตารางเวร</h3>
-            <p>ห้องยาสบปราบ</p>
-          </div>
-        </div>
+        <h3>📋 ระบบจัดตารางเวร</h3>
+        <p>ห้องยาสบปราบ</p>
       </div>
-      
       <nav class="sidebar-nav">
         <div class="nav-item active" data-page="booking" onclick="navigateTo('booking')">
-          <span class="material-icons-round">calendar_today</span>
-          <span>ฉันจะจองเวร</span>
+          <span class="material-icons-round">event</span> ฉันจะจองเวร
         </div>
         <div class="nav-item" data-page="settings" onclick="navigateTo('settings')">
-          <span class="material-icons-round">settings</span>
-          <span>ตั้งค่าข้อมูล</span>
+          <span class="material-icons-round">settings</span> ตั้งค่าข้อมูล
         </div>
         <div class="nav-item" data-page="reports" onclick="navigateTo('reports')">
-          <span class="material-icons-round">description</span>
-          <span>รายงาน</span>
+          <span class="material-icons-round">assessment</span> รายงาน
         </div>
         <div class="nav-item" data-page="analysis" onclick="navigateTo('analysis')">
-          <span class="material-icons-round">analytics</span>
-          <span>วิเคราะห์ข้อมูล</span>
+          <span class="material-icons-round">analytics</span> วิเคราะห์ข้อมูล
         </div>
       </nav>
-      
       <div class="sidebar-footer">
-        <div class="user-info">
-          <div class="user-avatar" id="userAvatar">A</div>
-          <div class="user-details">
-            <div class="name" id="userName">Admin</div>
-            <div class="role" id="userRole">ผู้ดูแลระบบ</div>
-          </div>
-          <button class="btn-logout material-icons-round" onclick="logout()" title="ออกจากระบบ">logout</button>
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div class="user-details">
+          <div class="name" id="userName">Admin</div>
+          <div class="role" id="userRole">ผู้ดูแลระบบ</div>
         </div>
+        <button class="btn-logout" onclick="logout()" title="ออกจากระบบ">
+          <span class="material-icons-round" style="font-size:20px;">logout</span>
+        </button>
       </div>
     </aside>
-    
-    <!-- Main Content -->
+
+    <!-- MAIN -->
     <main class="main-content" id="mainContent">
-      <!-- Dynamic content loaded here -->
+      <!-- Dynamic content -->
     </main>
   </div>
 
-  <!-- Booking Modal -->
-  <div class="modal-overlay" id="bookingModal">
-    <div class="modal">
-      <h3>จองเวร</h3>
-      <div id="bookingModalContent"></div>
-    </div>
+  <!-- MOBILE HEADER -->
+  <div class="mobile-header" id="mobileHeader">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <span class="material-icons-round">menu</span>
+    </button>
+    <span class="title">ระบบจัดตารางเวร</span>
+    <button class="btn-logout" onclick="logout()" style="color:white;">
+      <span class="material-icons-round" style="font-size:20px;">logout</span>
+    </button>
   </div>
 
-  <!-- Toast -->
+  <!-- MODAL -->
+  <div class="modal-overlay" id="bookingModal">
+    <div class="modal-content" id="bookingModalContent"></div>
+  </div>
+
+  <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
   <script>
-    // ============ STATE ============
-    let currentUser = null;
-    let currentPage = 'booking';
-    let currentYear = new Date().getFullYear() + 543;
-    let currentMonth = new Date().getMonth() + 1;
+  // ============ STATE ============
+  var currentUser = null;
+  var currentPage = "booking";
+  var currentYear = new Date().getFullYear() + 543;
+  var currentMonth = new Date().getMonth() + 1;
 
-    // ============ API CALL ============
-    function apiCall(action, data = {}) {
-      return new Promise((resolve, reject) => {
-        google.script.run
-          .withSuccessHandler(resolve)
-          .withFailureHandler(reject)
-          [action](data);
-      });
+  // ============ API CALL ============
+  function gasCall(fn, args) {
+    var fnName = fn;
+    var fnArgs = args;
+    return new Promise(function(resolve, reject) {
+      var runner = google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject);
+      // Apply arguments based on fn name
+      runner[fnName].apply(runner, fnArgs);
+    });
+  }
+
+  // ============ TOAST ============
+  function showToast(msg, type) {
+    type = type || 'success';
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    setTimeout(function() { t.classList.add('show'); }, 10);
+    setTimeout(function() { t.classList.remove('show'); }, 3000);
+  }
+
+  // ============ LOGIN ============
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var name = document.getElementById('loginName').value.trim();
+    var password = document.getElementById('loginPassword').value.trim();
+
+    if (!name || !password) {
+      document.getElementById('loginError').textContent = 'กรุณากรอกข้อมูลให้ครบ';
+      return;
     }
 
-    // Direct GAS function calls
-    function gasCall(fn, args) {
-      return new Promise((resolve, reject) => {
-        google.script.run
-          .withSuccessHandler(resolve)
-          .withFailureHandler(reject)
-          [fn](...args);
-      });
-    }
-
-    // ============ TOAST ============
-    function showToast(msg, type = 'success') {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast ' + type;
-      setTimeout(() => t.classList.add('show'), 10);
-      setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    // ============ LOGIN ============
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const name = document.getElementById('loginName').value.trim();
-      const password = document.getElementById('loginPassword').value.trim();
-      
-      if (!name || !password) {
-        document.getElementById('loginError').textContent = 'กรุณากรอกข้อมูลให้ครบ';
-        return;
-      }
-      
-      const result = await gasCall('apiLogin', [name, password]);
-      
+    gasCall('apiLogin', [name, password]).then(function(result) {
       if (result.success) {
         currentUser = result.user;
         document.getElementById('loginPage').style.display = 'none';
@@ -980,1138 +925,1219 @@
       } else {
         document.getElementById('loginError').textContent = result.message;
       }
+    }).catch(function(err) {
+      document.getElementById('loginError').textContent = 'เกิดข้อผิดพลาด: ' + err.message;
     });
+  });
 
-    function logout() {
-      currentUser = null;
-      document.getElementById('appLayout').classList.remove('active');
-      document.getElementById('loginPage').style.display = 'flex';
-      document.getElementById('loginForm').reset();
-      document.getElementById('loginError').textContent = '';
+  function logout() {
+    currentUser = null;
+    document.getElementById('appLayout').classList.remove('active');
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('loginForm').reset();
+    document.getElementById('loginError').textContent = '';
+  }
+
+  // ============ NAVIGATION ============
+  function navigateTo(page) {
+    currentPage = page;
+    document.querySelectorAll('.nav-item').forEach(function(el) {
+      el.classList.toggle('active', el.getAttribute('data-page') === page);
+    });
+    var main = document.getElementById('mainContent');
+    main.innerHTML = '<div class="loading"><div class="spinner"></div> กำลังโหลด...</div>';
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+
+    switch(page) {
+      case 'booking': renderBookingPage(); break;
+      case 'settings': renderSettingsPage(); break;
+      case 'reports': renderReportsPage(); break;
+      case 'analysis': renderAnalysisPage(); break;
     }
+  }
 
-    // ============ NAVIGATION ============
-    function navigateTo(page) {
-      currentPage = page;
-      document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.toggle('active', el.dataset.page === page);
-      });
-      
-      const main = document.getElementById('mainContent');
-      main.innerHTML = '<div class="loading"><div class="spinner"></div> กำลังโหลด...</div>';
-      
-      // Close sidebar on mobile
-      document.getElementById('sidebar').classList.remove('open');
-      
-      switch(page) {
-        case 'booking': renderBookingPage(); break;
-        case 'settings': renderSettingsPage(); break;
-        case 'reports': renderReportsPage(); break;
-        case 'analysis': renderAnalysisPage(); break;
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+  }
+
+  // ============ MONTH / YEAR HELPERS ============
+  var MONTH_NAMES = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+    'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  var MONTH_SHORT = ['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  var DAY_NAMES = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+
+  function formatDateThaiStr(dateVal) {
+    if (!dateVal) return '-';
+    var d = new Date(dateVal);
+    if (isNaN(d)) return String(dateVal);
+    return d.getDate() + ' ' + MONTH_SHORT[d.getMonth() + 1] + ' พ.ศ. ' + (d.getFullYear() + 543);
+  }
+
+  function formatDateNumericStr(dateVal) {
+    if (!dateVal) return '-';
+    var d = new Date(dateVal);
+    if (isNaN(d)) return String(dateVal);
+    var dd = String(d.getDate()).padStart(2,'0');
+    var mm = String(d.getMonth() + 1).padStart(2,'0');
+    return dd + '/' + mm + '/' + (d.getFullYear() + 543);
+  }
+
+  function getShiftLabel(shiftId) {
+    var map = {
+      'SHIFT_NORMAL': 'เวรวันปกติ',
+      'SHIFT_WEEKEND': 'เวรเสาร์-อาทิตย์/นักขัตฤกษ์',
+      'SHIFT_DOC_NORMAL': 'เวรเอกสาร (วันปกติ)',
+      'SHIFT_DOC_WEEKEND': 'เวรเอกสาร (วันหยุด)'
+    };
+    return map[shiftId] || shiftId;
+  }
+
+  function getShiftTypeLabel(shiftType) {
+    var map = { 'วันปกติ': 'เวรวันปกติ', 'วันหยุด': 'เวรวันหยุด', 'เวรเอกสาร': 'เวรเอกสาร' };
+    return map[shiftType] || shiftType;
+  }
+
+  // ============ BOOKING PAGE ============
+  function renderBookingPage() {
+    var main = document.getElementById('mainContent');
+    gasCall('apiGetCalendar', [String(currentYear), String(currentMonth)]).then(function(cal) {
+      var html = '<div class="page-header"><h2>ฉันจะจองเวร</h2><p>เลือกเดือน/ปี เพื่อดูปฏิทินและจองเวร</p></div>';
+
+      // Controls
+      html += '<div class="calendar-controls">';
+      html += '<select id="selMonth" onchange="changeCalendar()">';
+      for (var i = 0; i <= 12; i++) {
+        html += '<option value="' + i + '"' + (i === currentMonth ? ' selected' : '') + '>' + MONTH_NAMES[i] + '</option>';
       }
-    }
+      html += '</select>';
 
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-    }
+      html += '<select id="selYear" onchange="changeCalendar()">';
+      var years = [2567,2568,2569,2570,2571];
+      for (var yi = 0; yi < years.length; yi++) {
+        html += '<option value="' + years[yi] + '"' + (years[yi] === currentYear ? ' selected' : '') + '>พ.ศ. ' + years[yi] + '</option>';
+      }
+      html += '</select>';
 
-    // ============ BOOKING PAGE ============
-    async function renderBookingPage() {
-      const main = document.getElementById('mainContent');
-      
-      const calendar = await gasCall('apiGetCalendar', [String(currentYear), String(currentMonth)]);
-      
-      const monthNames = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-      const dayNames = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
-      
-      let html = `
-        <div class="page-header">
-          <h2>📅 ฉันจะจองเวร</h2>
-          <p>เลือกเดือน/ปีเพื่อดูปฏิทินและจองเวร</p>
-        </div>
-        
-        <div class="calendar-controls">
-          <select id="selMonth" onchange="changeCalendar()">
-            ${monthNames.map((m, i) => `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m || ''}</option>`).join('')}
-          </select>
-          <select id="selYear" onchange="changeCalendar()">
-            ${[2565,2566,2567,2568,2569,2570].map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>พ.ศ. ${y}</option>`).join('')}
-          </select>
-          <button class="btn btn-secondary" onclick="printCalendar()" style="margin-left:auto;">
-            <span class="material-icons-round" style="font-size:18px;vertical-align:middle;">print</span> พิมพ์ปฏิทิน
-          </button>
-        </div>
-        
-        <div class="calendar-summary">
-          <div class="summary-card working">
-            <div>
-              <div class="num">${calendar.workingDays}</div>
-              <div class="label">วันทำการ</div>
-            </div>
-          </div>
-          <div class="summary-card weekend">
-            <div>
-              <div class="num">${calendar.weekendDays}</div>
-              <div class="label">วันหยุด ส-อา</div>
-            </div>
-          </div>
-          <div class="summary-card holiday">
-            <div>
-              <div class="num">${calendar.holidayDays}</div>
-              <div class="label">วันนักขัตฤกษ์</div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="calendar-grid" id="printableCalendar">
-          <div class="calendar-header-row">
-            ${dayNames.map((d, i) => `<div class="day-name ${i === 0 || i === 6 ? 'holiday-col' : ''}">${d}</div>`).join('')}
-          </div>
-          <div class="calendar-body">
-      `;
-      
-      calendar.days.forEach(day => {
+      html += '<button class="btn btn-secondary" onclick="printCalendar()" style="margin-left:auto;">';
+      html += '<span class="material-icons-round" style="font-size:18px;vertical-align:middle;">print</span> พิมพ์ปฏิทิน</button>';
+      html += '</div>';
+
+      // Summary cards
+      html += '<div class="calendar-summary">';
+      html += '<div class="summary-card working"><div><div class="num">' + cal.workingDays + '</div><div class="label">วันทำการ</div></div></div>';
+      html += '<div class="summary-card weekend"><div><div class="num">' + cal.weekendDays + '</div><div class="label">วันหยุด ส-อา</div></div></div>';
+      html += '<div class="summary-card holiday"><div><div class="num">' + cal.nationalHolidayDays + '</div><div class="label">วันนักขัตฤกษ์</div></div></div>';
+      html += '</div>';
+
+      // Calendar grid
+      html += '<div class="calendar-grid" id="printableCalendar">';
+      html += '<div class="calendar-header-row">';
+      for (var di = 0; di < 7; di++) {
+        html += '<div class="day-name' + (di === 0 || di === 6 ? ' holiday-col' : '') + '">' + DAY_NAMES[di] + '</div>';
+      }
+      html += '</div><div class="calendar-body">';
+
+      for (var ci = 0; ci < cal.days.length; ci++) {
+        var day = cal.days[ci];
         if (!day) {
           html += '<div class="calendar-cell empty"></div>';
         } else {
-          let classes = 'calendar-cell';
+          var classes = 'calendar-cell';
           if (day.isWeekend) classes += ' weekend';
           if (day.isHoliday && !day.isWeekend) classes += ' holiday';
           if (day.isBooked) classes += ' booked';
-          
-          html += `<div class="${classes}" onclick="handleDayClick('${day.date}', ${day.isBooked})">`;
-          html += `<div class="day-number">${day.day}</div>`;
-          if (day.holidayName) html += `<div class="holiday-name">${day.holidayName}</div>`;
+
+          html += '<div class="' + classes + '" onclick="handleDayClick(\'' + day.date + '\',' + day.isBooked + ')">';
+          html += '<div class="day-number">' + day.day + '</div>';
+          if (day.holidayName) html += '<div class="holiday-name">' + day.holidayName + '</div>';
           if (day.booking) {
-            const isOwn = day.booking.user_id === currentUser.user_id;
-            html += `<div class="booking-info ${isOwn ? '' : 'booked-by-other'}">${isOwn ? '✅ ' : ''}${day.booking.booked_by} จอง</div>`;
+            var isOwn = String(day.booking.user_id) === String(currentUser.user_id);
+            html += '<div class="booking-info ' + (isOwn ? '' : 'booked-by-other') + '">';
+            html += (isOwn ? '✅ ' : '') + day.booking.booked_by + ' จอง</div>';
           }
           html += '</div>';
         }
-      });
-      
-      html += `</div></div>`;
+      }
+
+      html += '</div></div>';
       main.innerHTML = html;
-    }
+    }).catch(function(err) {
+      main.innerHTML = '<div class="empty-state"><span class="material-icons-round">error</span><p>เกิดข้อผิดพลาด: ' + err.message + '</p></div>';
+    });
+  }
 
-    function changeCalendar() {
-      currentMonth = parseInt(document.getElementById('selMonth').value) + 1;
-      currentYear = parseInt(document.getElementById('selYear').value);
-      renderBookingPage();
+  function changeCalendar() {
+    var m = document.getElementById('selMonth');
+    var y = document.getElementById('selYear');
+    if (m && y) {
+      currentMonth = parseInt(m.value) || 1;
+      currentYear = parseInt(y.value) || 2568;
     }
+    renderBookingPage();
+  }
 
-    async function handleDayClick(date, isBooked) {
-      if (isBooked) {
-        // Show existing booking info
-        const calendar = await gasCall('apiGetCalendar', [String(currentYear), String(currentMonth)]);
-        const day = calendar.days.find(d => d && d.date === date);
-        if (day && day.booking) {
-          const modal = document.getElementById('bookingModal');
-          const content = document.getElementById('bookingModalContent');
-          
-          const christianDate = new Date(date);
-          const dateThai = christianDate.getDate() + ' ' + getThaiMonthNameShort(christianDate.getMonth()) + ' พ.ศ. ' + (christianDate.getFullYear() + 543);
-          
-          content.innerHTML = `
-            <p style="margin-bottom:16px;color:var(--text-light);">วันที่ ${dateThai}</p>
-            <div style="background:var(--bg);padding:16px;border-radius:var(--radius-sm);margin-bottom:16px;">
-              <p><strong>ผู้จอง:</strong> ${day.booking.booked_by}</p>
-              <p><strong>ประเภทเวร:</strong> ${day.booking.shift_type}</p>
-            </div>
-            ${currentUser.is_admin ? `
-              <div style="display:flex;gap:8px;justify-content:flex-end;">
-                <button class="btn btn-danger btn-sm" onclick="deleteBooking('${day.booking.booking_id}')">ยกเลิกการจอง</button>
-                <button class="btn btn-secondary btn-sm" onclick="closeModal()">ปิด</button>
-              </div>
-            ` : `
-              <div style="text-align:right;">
-                <button class="btn btn-secondary btn-sm" onclick="closeModal()">ปิด</button>
-              </div>
-            `}
-          `;
-          modal.classList.add('active');
+  function handleDayClick(date, isBooked) {
+    if (isBooked) {
+      // Show existing booking info
+      gasCall('apiGetCalendar', [String(currentYear), String(currentMonth)]).then(function(cal) {
+        var day = null;
+        for (var i = 0; i < cal.days.length; i++) {
+          if (cal.days[i] && cal.days[i].date === date) { day = cal.days[i]; break; }
         }
+        if (!day || !day.booking) return;
+
+        var d = new Date(date);
+        var dateThai = d.getDate() + ' ' + MONTH_SHORT[d.getMonth() + 1] + ' พ.ศ. ' + (d.getFullYear() + 543);
+
+        var html = '<p style="margin-bottom:16px;color:var(--text-light);font-size:14px;">วันที่ ' + dateThai + '</p>';
+        html += '<div style="background:var(--bg);padding:16px;border-radius:var(--radius-sm);margin-bottom:16px;">';
+        html += '<p style="margin-bottom:6px;"><strong>ผู้จอง:</strong> ' + day.booking.booked_by + '</p>';
+        html += '<p style="margin-bottom:6px;"><strong>ประเภทเวร:</strong> ' + getShiftLabel(day.booking.shift_type) + '</p>';
+        html += '</div>';
+
+        if (currentUser.is_admin) {
+          html += '<div style="display:flex;gap:8px;justify-content:flex-end;">';
+          html += '<button class="btn btn-danger btn-sm" onclick="deleteBooking(\'' + day.booking.booking_id + '\')">ยกเลิกการจอง</button>';
+          html += '<button class="btn btn-secondary btn-sm" onclick="closeModal()">ปิด</button>';
+          html += '</div>';
+        } else {
+          html += '<div style="text-align:right;"><button class="btn btn-secondary btn-sm" onclick="closeModal()">ปิด</button></div>';
+        }
+
+        document.getElementById('bookingModalContent').innerHTML = html;
+        document.getElementById('bookingModal').classList.add('active');
+      });
+      return;
+    }
+
+    // Show booking form
+    gasCall('apiCheckBooking', [date]).then(function(check) {
+      if (check.booked) {
+        showToast('วันที่นี้มีผู้จองแล้ว', 'error');
         return;
       }
-      
-      // Check if it's a holiday/weekend
-      const checkResult = await gasCall('apiCheckBooking', [date, '']);
-      
-      const christianDate = new Date(date);
-      const dateThai = christianDate.getDate() + ' ' + getThaiMonthNameShort(christianDate.getMonth()) + ' พ.ศ. ' + (christianDate.getFullYear() + 543);
-      const dayOfWeek = christianDate.getDay();
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      
-      // Determine available shifts
-      const shifts = await gasCall('apiGetShifts', []);
-      let availableShifts;
-      
-      if (isWeekend) {
-        availableShifts = shifts.filter(s => s.shift_type === 'วันหยุด' || s.shift_type === 'เวรเอกสาร');
-      } else {
-        availableShifts = shifts.filter(s => s.shift_type === 'วันปกติ' || s.shift_type === 'เวรเอกสาร');
-      }
-      
-      const modal = document.getElementById('bookingModal');
-      const content = document.getElementById('bookingModalContent');
-      
-      content.innerHTML = `
-        <p style="margin-bottom:16px;color:var(--text-light);">วันที่ ${dateThai}</p>
-        <div class="form-group">
-          <label>เลือกประเภทเวร</label>
-          <select id="selShiftType">
-            ${availableShifts.map(s => `<option value="${s.shift_id}">${s.shift_name} (${s.hours} ชม. ${s.time_start}-${s.time_end})</option>`).join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label>ผู้อยู่เวร</label>
-          <select id="selUser">
-            <option value="${currentUser.user_id}">${currentUser.fullname}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>หมายเหตุ (ถ้ามี)</label>
-          <input type="text" id="bookingNotes" placeholder="หมายเหตุ (ไม่บังคับ)">
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-primary" onclick="confirmBooking('${date}')">ยืนยันจอง</button>
-          <button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
-        </div>
-      `;
-      
-      // Also load all users for admin
-      if (currentUser.is_admin) {
-        const users = await gasCall('apiGetUsers', []);
-        const selUser = document.getElementById('selUser');
-        selUser.innerHTML = users.map(u => `<option value="${u.user_id}">${u.fullname}</option>`).join('');
-      }
-      
-      modal.classList.add('active');
-    }
 
-    async function confirmBooking(date) {
-      const shiftType = document.getElementById('selShiftType').value;
-      const userId = document.getElementById('selUser').value;
-      const notes = document.getElementById('bookingNotes').value;
-      const users = await gasCall('apiGetUsers', []);
-      const user = users.find(u => u.user_id === userId);
-      
-      const bookingData = {
-        duty_date: date,
-        shift_type: shiftType,
-        user_id: userId,
-        booked_by: user ? user.fullname : '',
-        notes: notes
-      };
-      
-      const result = await gasCall('apiBookDuty', [bookingData]);
+      var d = new Date(date);
+      var dateThai = d.getDate() + ' ' + MONTH_SHORT[d.getMonth() + 1] + ' พ.ศ. ' + (d.getFullYear() + 543);
+      var dayOfWeek = d.getDay();
+      var isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      gasCall('apiGetShifts', []).then(function(shifts) {
+        // Filter shifts based on day type
+        var availableShifts;
+        if (isWeekend) {
+          availableShifts = shifts.filter(function(s) {
+            return s.shift_type === 'วันหยุด' || s.shift_type === 'เวรเอกสาร';
+          });
+        } else {
+          availableShifts = shifts.filter(function(s) {
+            return s.shift_type === 'วันปกติ' || s.shift_type === 'เวรเอกสาร';
+          });
+        }
+
+        var html = '<p style="margin-bottom:16px;color:var(--text-light);font-size:14px;">วันที่ ' + dateThai + '</p>';
+        html += '<div class="form-group"><label>เลือกประเภทเวร</label><select id="selShiftType">';
+        for (var si = 0; si < availableShifts.length; si++) {
+          var s = availableShifts[si];
+          html += '<option value="' + s.shift_id + '">' + s.shift_name + ' (' + s.hours + ' ชม. ' + s.time_start + '-' + s.time_end + ')</option>';
+        }
+        html += '</select></div>';
+
+        html += '<div class="form-group"><label>ผู้อยู่เวร</label><select id="selUser">';
+        html += '<option value="' + currentUser.user_id + '">' + currentUser.fullname + '</option>';
+        html += '</select></div>';
+
+        html += '<div class="form-group"><label>หมายเหตุ (ไม่บังคับ)</label>';
+        html += '<input type="text" id="bookingNotes" placeholder="หมายเหตุ (ถ้ามี)"></div>';
+
+        html += '<div class="modal-actions">';
+        html += '<button class="btn btn-primary" onclick="confirmBooking(\'' + date + '\')">ยืนยันจอง</button>';
+        html += '<button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>';
+        html += '</div>';
+
+        document.getElementById('bookingModalContent').innerHTML = html;
+
+        // Load all users for admin
+        if (currentUser.is_admin) {
+          gasCall('apiGetUsers', []).then(function(users) {
+            var sel = document.getElementById('selUser');
+            if (sel) {
+              sel.innerHTML = users.map(function(u) {
+                return '<option value="' + u.user_id + '"' + (String(u.user_id) === String(currentUser.user_id) ? ' selected' : '') + '>' + u.fullname + '</option>';
+              }).join('');
+            }
+          });
+        }
+
+        document.getElementById('bookingModal').classList.add('active');
+      });
+    }).catch(function(err) {
+      showToast('เกิดข้อผิดพลาด: ' + err.message, 'error');
+    });
+  }
+
+  function confirmBooking(date) {
+    var shiftType = document.getElementById('selShiftType').value;
+    var userId = document.getElementById('selUser').value;
+    var notes = document.getElementById('bookingNotes').value;
+
+    // Find user name
+    var bookingData = {
+      duty_date: date,
+      shift_type: shiftType,
+      user_id: userId,
+      booked_by: currentUser.fullname,
+      notes: notes
+    };
+
+    gasCall('apiBookDuty', [bookingData]).then(function(result) {
       closeModal();
-      
       if (result.success) {
-        showToast('จองเวรเรียบร้อยแล้ว');
+        showToast('จองเวรเรียบร้อยแล้ว', 'success');
         renderBookingPage();
       } else {
         showToast(result.message, 'error');
       }
-    }
+    }).catch(function(err) {
+      showToast('เกิดข้อผิดพลาด: ' + err.message, 'error');
+    });
+  }
 
-    async function deleteBooking(bookingId) {
-      if (confirm('ต้องการยกเลิกการจองนี้?')) {
-        await gasCall('apiDeleteBooking', [bookingId]);
+  function deleteBooking(bookingId) {
+    if (confirm('ต้องการยกเลิกการจองนี้?')) {
+      gasCall('apiDeleteBooking', [bookingId]).then(function() {
         closeModal();
-        showToast('ยกเลิกการจองแล้ว');
+        showToast('ยกเลิกการจองแล้ว', 'success');
         renderBookingPage();
+      });
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('bookingModal').classList.remove('active');
+  }
+
+  function printCalendar() {
+    window.print();
+  }
+
+  // ============ SETTINGS PAGE ============
+  function renderSettingsPage() {
+    if (!currentUser.is_admin) {
+      document.getElementById('mainContent').innerHTML =
+        '<div class="page-header"><h2>ตั้งค่าข้อมูล</h2></div>' +
+        '<div class="empty-state"><span class="material-icons-round">lock</span><p>เฉพาะผู้ดูแลระบบเท่านั้นที่เข้าถึงหน้านี้ได้</p></div>';
+      return;
+    }
+
+    var html = '<div class="page-header"><h2>ตั้งค่าข้อมูล</h2><p>จัดการข้อมูลบุคลากร ประเภทเวร และการแจ้งเตือน</p></div>';
+    html += '<div class="tabs" id="settingsTabs">';
+    html += '<div class="tab active" onclick="switchSettingsTab(\'tab-users\',this)">บุคลากร</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-shifts\',this)">ประเภทเวร</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-notif\',this)">การแจ้งเตือน</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-holidays\',this)">วันหยุด</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-egp\',this)">เลขโครงการ</div>';
+    html += '<div class="tab" onclick="switchSettingsTab(\'tab-settings\',this)">ตั้งค่าระบบ</div>';
+    html += '</div>';
+    html += '<div id="tab-users" class="tab-content active"></div>';
+    html += '<div id="tab-shifts" class="tab-content"></div>';
+    html += '<div id="tab-notif" class="tab-content"></div>';
+    html += '<div id="tab-holidays" class="tab-content"></div>';
+    html += '<div id="tab-egp" class="tab-content"></div>';
+    html += '<div id="tab-settings" class="tab-content"></div>';
+
+    document.getElementById('mainContent').innerHTML = html;
+    renderUsersTab();
+    renderShiftsTab();
+    renderNotifTab();
+    renderHolidaysTab();
+    renderEgpTab();
+    renderSettingsTab();
+  }
+
+  function switchSettingsTab(tabId, el) {
+    document.querySelectorAll('#settingsTabs .tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    if (el) el.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  // --- Users Tab ---
+  function renderUsersTab() {
+    gasCall('apiGetUsers', []).then(function(users) {
+      var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+      html += '<h3 style="font-size:16px;font-weight:600;color:var(--primary);">รายชื่อบุคลากร</h3>';
+      html += '<button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ เพิ่มบุคลากร</button>';
+      html += '</div>';
+
+      html += '<table class="data-table"><thead><tr>';
+      html += '<th>ชื่อ-นามสกุล</th><th>ตำแหน่ง</th><th>อัตรา/ชม.</th><th>สิทธิ์</th><th>จัดการ</th>';
+      html += '</tr></thead><tbody>';
+
+      for (var i = 0; i < users.length; i++) {
+        var u = users[i];
+        html += '<tr>';
+        html += '<td>' + u.fullname + '</td>';
+        html += '<td>' + (u.position || '-') + '</td>';
+        html += '<td>' + (u.rate_per_hour || 0) + '</td>';
+        html += '<td><span class="chip ' + (u.is_admin ? 'chip-normal' : 'chip-doc') + '">' + (u.is_admin ? 'Admin' : 'User') + '</span></td>';
+        html += '<td><div class="table-actions">';
+        html += '<button class="btn btn-secondary btn-sm" onclick="showEditUserModal(\'' + u.user_id + '\')">แก้ไข</button>';
+        if (String(u.user_id) !== 'USR_001') {
+          html += '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + u.user_id + '\')">ลบ</button>';
+        }
+        html += '</div></td></tr>';
       }
+
+      html += '</tbody></table>';
+      document.getElementById('tab-users').innerHTML = html;
+    });
+  }
+
+  function showAddUserModal() {
+    var html = '<h3>เพิ่มบุคลากรใหม่</h3>';
+    html += '<div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="newFullname" placeholder="กรอกชื่อ-นามสกุล"></div>';
+    html += '<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="newPosition" placeholder="กรอกตำแหน่ง"></div>';
+    html += '<div class="form-group"><label>อัตราค่าจ้าง/ชั่วโมง</label><input type="number" id="newRate" placeholder="0.00" step="0.01" min="0"></div>';
+    html += '<div class="form-group"><label>LINE User ID</label><input type="text" id="newLineId" placeholder="Uxxxx..."></div>';
+    html += '<div class="form-group"><label>รหัสผ่าน</label><input type="text" id="newPassword" placeholder="ตั้งรหัสผ่าน"></div>';
+    html += '<div class="form-group"><label><input type="checkbox" id="newIsAdmin"> เป็น Admin</label></div>';
+    html += '<div class="modal-actions">';
+    html += '<button class="btn btn-primary" onclick="addUser()">บันทึก</button>';
+    html += '<button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>';
+    html += '</div>';
+    document.getElementById('bookingModalContent').innerHTML = html;
+    document.getElementById('bookingModal').classList.add('active');
+  }
+
+  function addUser() {
+    var data = {
+      fullname: document.getElementById('newFullname').value.trim(),
+      position: document.getElementById('newPosition').value.trim(),
+      rate_per_hour: parseFloat(document.getElementById('newRate').value) || 0,
+      line_user_id: document.getElementById('newLineId').value.trim(),
+      password: document.getElementById('newPassword').value.trim(),
+      is_admin: document.getElementById('newIsAdmin').checked
+    };
+
+    if (!data.fullname || !data.password) {
+      showToast('กรุณากรอกชื่อและรหัสผ่าน', 'error');
+      return;
     }
 
-    function closeModal() {
-      document.getElementById('bookingModal').classList.remove('active');
-    }
-
-    function printCalendar() {
-      window.print();
-    }
-
-    function getThaiMonthNameShort(monthIdx) {
-      const names = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-      return names[monthIdx] || '';
-    }
-
-    // ============ SETTINGS PAGE ============
-    async function renderSettingsPage() {
-      if (!currentUser.is_admin) {
-        document.getElementById('mainContent').innerHTML = `
-          <div class="page-header"><h2>ตั้งค่าข้อมูล</h2></div>
-          <div class="empty-state">
-            <span class="material-icons-round">lock</span>
-            <p>เฉพาะผู้ดูแลระบบเท่านั้นที่เข้าถึงหน้านี้ได้</p>
-          </div>
-        `;
-        return;
-      }
-      
-      const main = document.getElementById('mainContent');
-      main.innerHTML = `
-        <div class="page-header">
-          <h2>⚙️ ตั้งค่าข้อมูล</h2>
-          <p>จัดการข้อมูลบุคลากร ประเภทเวร และการแจ้งเตือน</p>
-        </div>
-        
-        <div class="tabs">
-          <div class="tab active" onclick="switchTab('tab-users')">บุคลากร</div>
-          <div class="tab" onclick="switchTab('tab-shifts')">ประเภทเวร</div>
-          <div class="tab" onclick="switchTab('tab-notif')">การแจ้งเตือน</div>
-          <div class="tab" onclick="switchTab('tab-holidays')">วันหยุด</div>
-          <div class="tab" onclick="switchTab('tab-settings')">ตั้งค่าระบบ</div>
-        </div>
-        
-        <div id="tab-users" class="tab-content active"></div>
-        <div id="tab-shifts" class="tab-content"></div>
-        <div id="tab-notif" class="tab-content"></div>
-        <div id="tab-holidays" class="tab-content"></div>
-        <div id="tab-settings" class="tab-content"></div>
-      `;
-      
-      renderUsersTab();
-      renderShiftsTab();
-      renderNotifTab();
-      renderHolidaysTab();
-      renderSettingsTab();
-    }
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
-    }
-
-    async function renderUsersTab() {
-      const users = await gasCall('apiGetUsers', []);
-      const container = document.getElementById('tab-users');
-      
-      container.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <h3 style="font-size:16px;font-weight:600;color:var(--primary);">รายชื่อบุคลากร</h3>
-          <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ เพิ่มบุคลากร</button>
-        </div>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>ชื่อ-นามสกุล</th>
-              <th>ตำแหน่ง</th>
-              <th>อัตรา/ชม.</th>
-              <th>สิทธิ์</th>
-              <th>จัดการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${users.map(u => `
-              <tr>
-                <td>${u.fullname}</td>
-                <td>${u.position || '-'}</td>
-                <td>${u.rate_per_hour || 0}</td>
-                <td>${u.is_admin ? 'Admin' : 'User'}</td>
-                <td>
-                  <div class="table-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="showEditUserModal('${u.user_id}')">แก้ไข</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.user_id}')">ลบ</button>
-                  </div>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function showAddUserModal() {
-      const modal = document.getElementById('bookingModal');
-      const content = document.getElementById('bookingModalContent');
-      content.innerHTML = `
-        <h3>เพิ่มบุคลากรใหม่</h3>
-        <div class="form-group">
-          <label>ชื่อ-นามสกุล</label>
-          <input type="text" id="newFullname" placeholder="กรอกชื่อ-นามสกุล">
-        </div>
-        <div class="form-group">
-          <label>ตำแหน่ง</label>
-          <input type="text" id="newPosition" placeholder="กรอกตำแหน่ง">
-        </div>
-        <div class="form-group">
-          <label>อัตราค่าจ้าง/ชั่วโมง</label>
-          <input type="number" id="newRate" placeholder="0.00" step="0.01">
-        </div>
-        <div class="form-group">
-          <label>LINE User ID</label>
-          <input type="text" id="newLineId" placeholder="Uxxxx...">
-        </div>
-        <div class="form-group">
-          <label>รหัสผ่าน</label>
-          <input type="text" id="newPassword" placeholder="ตั้งรหัสผ่าน">
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" id="newIsAdmin"> เป็น Admin</label>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-primary" onclick="addUser()">บันทึก</button>
-          <button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
-        </div>
-      `;
-      modal.classList.add('active');
-    }
-
-    async function addUser() {
-      const data = {
-        fullname: document.getElementById('newFullname').value,
-        position: document.getElementById('newPosition').value,
-        rate_per_hour: parseFloat(document.getElementById('newRate').value) || 0,
-        line_user_id: document.getElementById('newLineId').value,
-        password: document.getElementById('newPassword').value,
-        is_admin: document.getElementById('newIsAdmin').checked
-      };
-      
-      if (!data.fullname || !data.password) {
-        showToast('กรุณากรอกชื่อและรหัสผ่าน', 'error');
-        return;
-      }
-      
-      await gasCall('apiAddUser', [data]);
+    gasCall('apiAddUser', [data]).then(function(result) {
       closeModal();
-      showToast('เพิ่มบุคลากรแล้ว');
-      renderUsersTab();
-    }
-
-    async function deleteUser(userId) {
-      if (confirm('ต้องการลบผู้ใช้นี้?')) {
-        await gasCall('apiDeleteUser', [userId]);
-        showToast('ลบแล้ว');
+      if (result.success) {
+        showToast('เพิ่มบุคลากรแล้ว', 'success');
         renderUsersTab();
+      } else {
+        showToast(result.message, 'error');
       }
-    }
+    });
+  }
 
-    async function showEditUserModal(userId) {
-      const users = await gasCall('apiGetUsers', []);
-      const user = users.find(u => u.user_id === userId);
+  function deleteUser(userId) {
+    if (confirm('ต้องการลบผู้ใช้นี้? ข้อมูลการจองที่เกี่ยวข้องจะถูกลบด้วย')) {
+      gasCall('apiDeleteUser', [userId]).then(function(result) {
+        if (result.success) {
+          showToast('ลบแล้ว', 'success');
+          renderUsersTab();
+        } else {
+          showToast(result.message, 'error');
+        }
+      });
+    }
+  }
+
+  function showEditUserModal(userId) {
+    gasCall('apiGetUsers', []).then(function(users) {
+      var user = null;
+      for (var i = 0; i < users.length; i++) {
+        if (String(users[i].user_id) === String(userId)) { user = users[i]; break; }
+      }
       if (!user) return;
-      
-      const modal = document.getElementById('bookingModal');
-      const content = document.getElementById('bookingModalContent');
-      content.innerHTML = `
-        <h3>แก้ไขข้อมูลบุคลากร</h3>
-        <div class="form-group">
-          <label>ชื่อ-นามสกุล</label>
-          <input type="text" id="editFullname" value="${user.fullname}">
-        </div>
-        <div class="form-group">
-          <label>ตำแหน่ง</label>
-          <input type="text" id="editPosition" value="${user.position || ''}">
-        </div>
-        <div class="form-group">
-          <label>อัตราค่าจ้าง/ชั่วโมง</label>
-          <input type="number" id="editRate" value="${user.rate_per_hour || 0}" step="0.01">
-        </div>
-        <div class="form-group">
-          <label>LINE User ID</label>
-          <input type="text" id="editLineId" value="${user.line_user_id || ''}">
-        </div>
-        <div class="form-group">
-          <label>รหัสผ่าน</label>
-          <input type="text" id="editPassword" value="${user.password}">
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" id="editIsAdmin" ${user.is_admin ? 'checked' : ''}> เป็น Admin</label>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-primary" onclick="saveEditUser('${userId}')">บันทึก</button>
-          <button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
-        </div>
-      `;
-      modal.classList.add('active');
-    }
 
-    async function saveEditUser(userId) {
-      const data = {
-        user_id: userId,
-        fullname: document.getElementById('editFullname').value,
-        position: document.getElementById('editPosition').value,
-        rate_per_hour: parseFloat(document.getElementById('editRate').value) || 0,
-        line_user_id: document.getElementById('editLineId').value,
-        password: document.getElementById('editPassword').value,
-        is_admin: document.getElementById('editIsAdmin').checked
-      };
-      
-      await gasCall('apiUpdateUser', [userId, data]);
+      var html = '<h3>แก้ไขข้อมูลบุคลากร</h3>';
+      html += '<div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="editFullname" value="' + user.fullname + '"></div>';
+      html += '<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="editPosition" value="' + (user.position || '') + '"></div>';
+      html += '<div class="form-group"><label>อัตราค่าจ้าง/ชั่วโมง</label><input type="number" id="editRate" value="' + (user.rate_per_hour || 0) + '" step="0.01" min="0"></div>';
+      html += '<div class="form-group"><label>LINE User ID</label><input type="text" id="editLineId" value="' + (user.line_user_id || '') + '"></div>';
+      html += '<div class="form-group"><label>รหัสผ่าน</label><input type="text" id="editPassword" value="' + user.password + '"></div>';
+      html += '<div class="form-group"><label><input type="checkbox" id="editIsAdmin" ' + (user.is_admin ? 'checked' : '') + '> เป็น Admin</label></div>';
+      html += '<div class="modal-actions">';
+      html += '<button class="btn btn-primary" onclick="saveEditUser(\'' + userId + '\')">บันทึก</button>';
+      html += '<button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>';
+      html += '</div>';
+
+      document.getElementById('bookingModalContent').innerHTML = html;
+      document.getElementById('bookingModal').classList.add('active');
+    });
+  }
+
+  function saveEditUser(userId) {
+    var data = {
+      fullname: document.getElementById('editFullname').value.trim(),
+      position: document.getElementById('editPosition').value.trim(),
+      rate_per_hour: parseFloat(document.getElementById('editRate').value) || 0,
+      line_user_id: document.getElementById('editLineId').value.trim(),
+      password: document.getElementById('editPassword').value.trim(),
+      is_admin: document.getElementById('editIsAdmin').checked
+    };
+
+    gasCall('apiUpdateUser', [userId, data]).then(function(result) {
       closeModal();
-      showToast('บันทึกแล้ว');
-      renderUsersTab();
-    }
-
-    async function renderShiftsTab() {
-      const shifts = await gasCall('apiGetShifts', []);
-      const container = document.getElementById('tab-shifts');
-      
-      container.innerHTML = `
-        <h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:16px;">ประเภทเวร</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>ชื่อ</th>
-              <th>กลุ่ม</th>
-              <th>ชั่วโมง</th>
-              <th>เวลา</th>
-              <th>อัตราคูณ</th>
-              <th>แจ้งเตือน</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${shifts.map(s => `
-              <tr>
-                <td>${s.shift_name}</td>
-                <td>${s.shift_type}</td>
-                <td>${s.hours}</td>
-                <td>${s.time_start}-${s.time_end}</td>
-                <td>${s.rate_multiplier}x</td>
-                <td><input type="checkbox" ${s.notify_enabled ? 'checked' : ''} onchange="toggleShiftNotify('${s.shift_id}', this.checked)"></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
-    }
-
-    async function toggleShiftNotify(shiftId, enabled) {
-      await gasCall('apiUpdateShift', [shiftId, { shift_id: shiftId, notify_enabled: enabled }]);
-      showToast('บันทึกแล้ว');
-    }
-
-    async function renderNotifTab() {
-      const users = await gasCall('apiGetUsers', []);
-      const shifts = await gasCall('apiGetShifts', []);
-      const notifs = await gasCall('apiGetNotifications', []);
-      const container = document.getElementById('tab-notif');
-      
-      container.innerHTML = `
-        <h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:16px;">ตั้งค่าการแจ้งเตือน LINE</h3>
-        <p style="color:var(--text-light);margin-bottom:16px;font-size:14px;">เลือกผู้ใช้และประเภทเวรที่ต้องการให้ส่งแจ้งเตือนไปยัง LINE OA</p>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>บุคลากร</th>
-              <th>ประเภทเวร</th>
-              <th>เปิด/ปิด</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${users.filter(u => u.user_id !== 'USR_001').map(u => {
-              return shifts.map(s => {
-                const notif = notifs.find(n => n.user_id === u.user_id && n.shift_type === s.shift_id);
-                return `
-                  <tr>
-                    <td>${u.fullname}</td>
-                    <td>${s.shift_name}</td>
-                    <td>
-                      <input type="checkbox" ${notif ? notif.is_active : true} 
-                        onchange="setNotif('${u.user_id}', '${s.shift_id}', this.checked)">
-                    </td>
-                  </tr>
-                `;
-              }).join('');
-            }).join('')}
-          </tbody>
-        </table>
-      `;
-    }
-
-    async function setNotif(userId, shiftType, isActive) {
-      await gasCall('apiSetNotification', [{ user_id: userId, shift_type: shiftType, is_active: isActive }]);
-      showToast('บันทึกแล้ว');
-    }
-
-    async function renderHolidaysTab() {
-      const holidays = await gasCall('apiGetHolidays', [String(currentYear)]);
-      const container = document.getElementById('tab-holidays');
-      
-      container.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <h3 style="font-size:16px;font-weight:600;color:var(--primary);">วันหยุดนักขัตฤกษ์ พ.ศ. ${currentYear}</h3>
-          <select onchange="loadHolidaysForYear(this.value)" style="padding:6px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Sarabun';">
-            ${[2567,2568,2569,2570].map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`).join('')}
-          </select>
-        </div>
-        <button class="btn btn-primary btn-sm" style="margin-bottom:16px;" onclick="showAddHolidayModal()">+ เพิ่มวันหยุด</button>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>วันที่</th>
-              <th>ชื่อวันหยุด</th>
-              <th>ประเภท</th>
-              <th>จัดการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${holidays.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:20px;">ไม่มีข้อมูล</td></tr>' : 
-            holidays.map(h => `
-              <tr>
-                <td>${h.holiday_date}</td>
-                <td>${h.holiday_name}</td>
-                <td>${h.holiday_type === 'weekend' ? 'เสาร์-อาทิตย์' : 'นักขัตฤกษ์'}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="deleteHoliday('${h.holiday_date}')">ลบ</button></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function showAddHolidayModal() {
-      const modal = document.getElementById('bookingModal');
-      const content = document.getElementById('bookingModalContent');
-      content.innerHTML = `
-        <h3>เพิ่มวันหยุดนักขัตฤกษ์</h3>
-        <div class="form-group">
-          <label>วันที่ (ค.ศ.)</label>
-          <input type="date" id="holidayDate">
-        </div>
-        <div class="form-group">
-          <label>ชื่อวันหยุด</label>
-          <input type="text" id="holidayName" placeholder="เช่น วันมาฆบูชา">
-        </div>
-        <div class="form-group">
-          <label>ประเภท</label>
-          <select id="holidayType">
-            <option value="national_holiday">วันนักขัตฤกษ์</option>
-            <option value="weekend">วันหยุดเสาร์-อาทิตย์</option>
-          </select>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-primary" onclick="addHoliday()">บันทึก</button>
-          <button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
-        </div>
-      `;
-      modal.classList.add('active');
-    }
-
-    async function addHoliday() {
-      const date = document.getElementById('holidayDate').value;
-      const name = document.getElementById('holidayName').value;
-      const type = document.getElementById('holidayType').value;
-      const year = parseInt(date.split('-')[0]) + 543;
-      
-      if (!date || !name) {
-        showToast('กรุณากรอกข้อมูลให้ครบ', 'error');
-        return;
+      if (result.success) {
+        showToast('บันทึกแล้ว', 'success');
+        renderUsersTab();
+      } else {
+        showToast(result.message, 'error');
       }
-      
-      await gasCall('apiAddHoliday', [{ holiday_date: date, holiday_name: name, holiday_type: type, year: year }]);
-      closeModal();
-      showToast('เพิ่มวันหยุดแล้ว');
-      renderHolidaysTab();
+    });
+  }
+
+  // --- Shifts Tab ---
+  function renderShiftsTab() {
+    gasCall('apiGetShifts', []).then(function(shifts) {
+      var html = '<h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:16px;">ประเภทเวร</h3>';
+      html += '<table class="data-table"><thead><tr>';
+      html += '<th>ชื่อ</th><th>กลุ่ม</th><th>ชั่วโมง</th><th>เวลา</th><th>อัตราคูณ</th><th>แจ้งเตือน</th>';
+      html += '</tr></thead><tbody>';
+
+      for (var i = 0; i < shifts.length; i++) {
+        var s = shifts[i];
+        html += '<tr>';
+        html += '<td>' + s.shift_name + '</td>';
+        html += '<td><span class="chip ' + (s.shift_type === 'วันปกติ' ? 'chip-normal' : s.shift_type === 'วันหยุด' ? 'chip-weekend' : 'chip-doc') + '">' + s.shift_type + '</span></td>';
+        html += '<td>' + s.hours + ' ชม.</td>';
+        html += '<td>' + s.time_start + ' - ' + s.time_end + '</td>';
+        html += '<td>' + s.rate_multiplier + 'x</td>';
+        html += '<td><label class="switch"><input type="checkbox" ' + (s.notify_enabled ? 'checked' : '') + ' onchange="toggleShiftNotify(\'' + s.shift_id + '\',this.checked)"><span class="slider"></span></label></td>';
+        html += '</tr>';
+      }
+
+      html += '</tbody></table>';
+      document.getElementById('tab-shifts').innerHTML = html;
+    });
+  }
+
+  function toggleShiftNotify(shiftId, enabled) {
+    gasCall('apiUpdateShift', [shiftId, { shift_id: shiftId, notify_enabled: enabled }]).then(function() {
+      showToast('บันทึกแล้ว', 'success');
+    });
+  }
+
+  // --- Notifications Tab ---
+  function renderNotifTab() {
+    gasCall('apiGetUsers', []).then(function(users) {
+      gasCall('apiGetShifts', []).then(function(shifts) {
+        gasCall('apiGetNotifications', []).then(function(notifs) {
+          var html = '<h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:8px;">ตั้งค่าการแจ้งเตือน LINE</h3>';
+          html += '<p style="color:var(--text-light);margin-bottom:16px;font-size:13px;">เลือกผู้ใช้และประเภทเวรที่ต้องการให้ส่งแจ้งเตือนไปยัง LINE OA</p>';
+
+          html += '<table class="data-table"><thead><tr>';
+          html += '<th>บุคลากร</th><th>ประเภทเวร</th><th>เปิด/ปิด</th>';
+          html += '</tr></thead><tbody>';
+
+          var nonAdminUsers = users.filter(function(u) { return String(u.user_id) !== 'USR_001'; });
+          for (var ui = 0; ui < nonAdminUsers.length; ui++) {
+            var u = nonAdminUsers[ui];
+            for (var si = 0; si < shifts.length; si++) {
+              var s = shifts[si];
+              var notif = null;
+              for (var ni = 0; ni < notifs.length; ni++) {
+                if (String(notifs[ni].user_id) === String(u.user_id) && String(notifs[ni].shift_type) === String(s.shift_id)) {
+                  notif = notifs[ni]; break;
+                }
+              }
+              html += '<tr>';
+              html += '<td>' + u.fullname + '</td>';
+              html += '<td>' + s.shift_name + '</td>';
+              html += '<td><label class="switch"><input type="checkbox" ' + (notif ? (notif.is_active ? 'checked' : '') : 'checked') + ' onchange="setNotif(\'' + u.user_id + '\',\'' + s.shift_id + '\',this.checked)"><span class="slider"></span></label></td>';
+              html += '</tr>';
+            }
+          }
+
+          html += '</tbody></table>';
+          document.getElementById('tab-notif').innerHTML = html;
+        });
+      });
+    });
+  }
+
+  function setNotif(userId, shiftType, isActive) {
+    gasCall('apiSetNotification', [{ user_id: userId, shift_type: shiftType, is_active: isActive }]).then(function() {
+      showToast('บันทึกแล้ว', 'success');
+    });
+  }
+
+  // --- Holidays Tab ---
+  function renderHolidaysTab() {
+    gasCall('apiGetHolidays', [String(currentYear)]).then(function(holidays) {
+      var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+      html += '<h3 style="font-size:16px;font-weight:600;color:var(--primary);">วันหยุดนักขัตฤกษ์ พ.ศ. ' + currentYear + '</h3>';
+      html += '<select onchange="loadHolidaysForYear(this.value)" style="padding:6px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:\'Sarabun\';">';
+      [2567,2568,2569,2570,2571].forEach(function(y) {
+        html += '<option value="' + y + '"' + (y === currentYear ? ' selected' : '') + '>' + y + '</option>';
+      });
+      html += '</select></div>';
+
+      html += '<button class="btn btn-primary btn-sm" style="margin-bottom:16px;" onclick="showAddHolidayModal()">+ เพิ่มวันหยุด</button>';
+      html += '<table class="data-table"><thead><tr><th>วันที่</th><th>ชื่อวันหยุด</th><th>ประเภท</th><th>จัดการ</th></tr></thead><tbody>';
+
+      if (holidays.length === 0) {
+        html += '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:20px;">ไม่มีข้อมูล</td></tr>';
+      } else {
+        for (var i = 0; i < holidays.length; i++) {
+          var h = holidays[i];
+          html += '<tr>';
+          html += '<td>' + formatDateThaiStr(h.holiday_date) + '</td>';
+          html += '<td>' + h.holiday_name + '</td>';
+          html += '<td>' + (h.holiday_type === 'weekend' ? 'เสาร์-อาทิตย์' : 'นักขัตฤกษ์') + '</td>';
+          html += '<td><button class="btn btn-danger btn-sm" onclick="deleteHoliday(\'' + h.holiday_date + '\')">ลบ</button></td>';
+          html += '</tr>';
+        }
+      }
+
+      html += '</tbody></table>';
+      document.getElementById('tab-holidays').innerHTML = html;
+    });
+  }
+
+  function showAddHolidayModal() {
+    var html = '<h3>เพิ่มวันหยุดนักขัตฤกษ์</h3>';
+    html += '<div class="form-group"><label>วันที่ (ค.ศ.)</label><input type="date" id="holidayDate"></div>';
+    html += '<div class="form-group"><label>ชื่อวันหยุด</label><input type="text" id="holidayName" placeholder="เช่น วันมาฆบูชา"></div>';
+    html += '<div class="form-group"><label>ประเภท</label><select id="holidayType"><option value="national_holiday">วันนักขัตฤกษ์</option><option value="weekend">วันหยุดเสาร์-อาทิตย์</option></select></div>';
+    html += '<div class="modal-actions">';
+    html += '<button class="btn btn-primary" onclick="addHoliday()">บันทึก</button>';
+    html += '<button class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>';
+    html += '</div>';
+    document.getElementById('bookingModalContent').innerHTML = html;
+    document.getElementById('bookingModal').classList.add('active');
+  }
+
+  function addHoliday() {
+    var date = document.getElementById('holidayDate').value;
+    var name = document.getElementById('holidayName').value.trim();
+    var type = document.getElementById('holidayType').value;
+
+    if (!date || !name) {
+      showToast('กรุณากรอกข้อมูลให้ครบ', 'error');
+      return;
     }
 
-    async function deleteHoliday(date) {
-      if (confirm('ต้องการลบวันหยุดนี้?')) {
-        await gasCall('apiDeleteHoliday', [date]);
-        showToast('ลบแล้ว');
+    var year = parseInt(date.split('-')[0]) + 543;
+    gasCall('apiAddHoliday', [{ holiday_date: date, holiday_name: name, holiday_type: type, year: year }]).then(function() {
+      closeModal();
+      showToast('เพิ่มวันหยุดแล้ว', 'success');
+      renderHolidaysTab();
+    });
+  }
+
+  function deleteHoliday(date) {
+    if (confirm('ต้องการลบวันหยุดนี้?')) {
+      gasCall('apiDeleteHoliday', [date]).then(function() {
+        showToast('ลบแล้ว', 'success');
         renderHolidaysTab();
+      });
+    }
+  }
+
+  function loadHolidaysForYear(year) {
+    currentYear = parseInt(year);
+    renderHolidaysTab();
+  }
+
+  // --- EGP Projects Tab ---
+  function renderEgpTab() {
+    gasCall('apiGetEgpProjects', []).then(function(projects) {
+      var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+      html += '<h3 style="font-size:16px;font-weight:600;color:var(--primary);">เลขที่โครงการ (EGP)</h3>';
+      html += '<span style="font-size:14px;color:var(--text-light);">ทั้งหมด ' + projects.length + ' โครงการ</span>';
+      html += '</div>';
+
+      html += '<div style="display:flex;gap:8px;margin-bottom:16px;">';
+      html += '<input type="text" id="egpProjectNo" placeholder="เลขที่โครงการ (เช่น EGP-001)" style="flex:1;padding:8px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:\'Sarabun\';">';
+      html += '<button class="btn btn-primary btn-sm" onclick="addEgpProject()">+ เพิ่มโครงการ</button>';
+      html += '</div>';
+
+      html += '<table class="data-table"><thead><tr><th>ที่</th><th>เลขที่โครงการ</th><th>จัดการ</th></tr></thead><tbody>';
+
+      if (projects.length === 0) {
+        html += '<tr><td colspan="3" style="text-align:center;color:var(--text-light);padding:20px;">ยังไม่มีข้อมูลโครงการ</td></tr>';
+      } else {
+        for (var i = 0; i < projects.length; i++) {
+          var p = projects[i];
+          html += '<tr>';
+          html += '<td>' + (i + 1) + '</td>';
+          html += '<td>' + p.project_no + '</td>';
+          html += '<td><button class="btn btn-danger btn-sm" onclick="deleteEgpProject(\'' + p.project_no + '\')">ลบ</button></td>';
+          html += '</tr>';
+        }
+      }
+
+      html += '</tbody></table>';
+      document.getElementById('tab-egp').innerHTML = html;
+    });
+  }
+
+  function addEgpProject() {
+    var projectNo = document.getElementById('egpProjectNo').value.trim();
+    if (!projectNo) {
+      showToast('กรุณากรอกเลขที่โครงการ', 'error');
+      return;
+    }
+    gasCall('apiAddEgpProject', [{ project_no: projectNo }]).then(function(result) {
+      if (result && result.success) {
+        document.getElementById('egpProjectNo').value = '';
+        showToast('เพิ่มโครงการแล้ว', 'success');
+        renderEgpTab();
+      } else {
+        showToast(result ? result.message : 'เกิดข้อผิดพลาด', 'error');
+      }
+    });
+  }
+
+  function deleteEgpProject(projectNo) {
+    if (confirm('ต้องการลบโครงการนี้?')) {
+      gasCall('apiDeleteEgpProject', [{ project_no: projectNo }]).then(function() {
+        showToast('ลบแล้ว', 'success');
+        renderEgpTab();
+      });
+    }
+  }
+
+  // --- Settings Tab ---
+  function renderSettingsTab() {
+    gasCall('apiGetSettings', []).then(function(settings) {
+      var tokenVal = '';
+      var groupVal = '';
+      var orgVal = 'ห้องยาสบปราบ';
+      var autoSend = 'true';
+
+      for (var i = 0; i < settings.length; i++) {
+        if (String(settings[i].key) === 'line_channel_access_token') tokenVal = settings[i].value;
+        if (String(settings[i].key) === 'line_notify_group_id') groupVal = settings[i].value;
+        if (String(settings[i].key) === 'organization_name') orgVal = settings[i].value;
+        if (String(settings[i].key) === 'auto_send_line') autoSend = settings[i].value;
+      }
+
+      var html = '<h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:16px;">ตั้งค่าระบบ</h3>';
+      html += '<div class="analysis-card">';
+      html += '<div class="form-group"><label>ชื่อหน่วยงาน</label><input type="text" id="settingOrgName" value="' + orgVal + '"></div>';
+      html += '<div class="form-group"><label>LINE Channel Access Token</label><input type="text" id="settingToken" value="' + tokenVal + '" placeholder="วาง Token ที่นี่"></div>';
+      html += '<div class="form-group"><label>LINE Target ID (Group ID หรือ User ID)</label><input type="text" id="settingGroupId" value="' + groupVal + '" placeholder="Rxxxx หรือ Uxxxx"></div>';
+      html += '<div class="form-group"><label><input type="checkbox" id="settingAutoSend" ' + (autoSend === 'true' ? 'checked' : '') + '> ส่งแจ้งเตือน LINE อัตโนมัติเมื่อมีการจอง</label></div>';
+      html += '<button class="btn btn-primary" onclick="saveSettings()">บันทึกการตั้งค่า</button>';
+      html += '</div>';
+
+      document.getElementById('tab-settings').innerHTML = html;
+    });
+  }
+
+  function saveSettings() {
+    var tasks = [];
+    tasks.push(gasCall('apiUpdateSetting', ['organization_name', document.getElementById('settingOrgName').value]));
+    tasks.push(gasCall('apiUpdateSetting', ['line_channel_access_token', document.getElementById('settingToken').value]));
+    tasks.push(gasCall('apiUpdateSetting', ['line_notify_group_id', document.getElementById('settingGroupId').value]));
+    tasks.push(gasCall('apiUpdateSetting', ['auto_send_line', document.getElementById('settingAutoSend').checked ? 'true' : 'false']));
+
+    Promise.all(tasks).then(function() {
+      showToast('บันทึกการตั้งค่าแล้ว', 'success');
+    });
+  }
+
+  // ============ REPORTS PAGE ============
+  function renderReportsPage() {
+    var html = '<div class="page-header"><h2>รายงาน</h2><p>สร้างรายงานตามรูปแบบราชการไทย</p></div>';
+
+    html += '<div class="report-selector">';
+    html += '<select id="reportYear" onchange="loadReport()">';
+    [2567,2568,2569,2570,2571].forEach(function(y) {
+      html += '<option value="' + y + '"' + (y === currentYear ? ' selected' : '') + '>พ.ศ. ' + y + '</option>';
+    });
+    html += '</select>';
+
+    html += '<select id="reportMonth" onchange="loadReport()">';
+    for (var i = 0; i <= 12; i++) {
+      html += '<option value="' + i + '"' + (i === currentMonth - 1 ? ' selected' : '') + '>' + MONTH_NAMES[i] + '</option>';
+    }
+    html += '</select></div>';
+
+    html += '<div class="tabs" id="reportTabs">';
+    html += '<div class="tab active" onclick="switchReportTab(\'report-schedule\',this)">ตารางเวรประจำเดือน</div>';
+    html += '<div class="tab" onclick="switchReportTab(\'report-doc\',this)">ตารางเวรเอกสาร</div>';
+    html += '<div class="tab" onclick="switchReportTab(\'report-doc-attach\',this)">เอกสารแนบเวรเอกสาร</div>';
+    html += '<div class="tab" onclick="switchReportTab(\'report-payment\',this)">หลักฐานการจ่ายเงิน</div>';
+    html += '<div class="tab" onclick="switchReportTab(\'report-my-duty\',this)">เวรฉันวันไหน</div>';
+    html += '</div>';
+
+    html += '<div id="report-schedule" class="tab-content active"></div>';
+    html += '<div id="report-doc" class="tab-content"></div>';
+    html += '<div id="report-doc-attach" class="tab-content"></div>';
+    html += '<div id="report-payment" class="tab-content"></div>';
+    html += '<div id="report-my-duty" class="tab-content"></div>';
+
+    html += '<div style="margin-top:16px;text-align:right;">';
+    html += '<button class="btn btn-primary" onclick="window.print()"><span class="material-icons-round" style="font-size:18px;vertical-align:middle;">print</span> พิมพ์ / บันทึก PDF</button>';
+    html += '</div>';
+
+    document.getElementById('mainContent').innerHTML = html;
+    loadReport();
+  }
+
+  function switchReportTab(tabId, el) {
+    document.querySelectorAll('#reportTabs .tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    if (el) el.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  function loadReport() {
+    var year = document.getElementById('reportYear').value;
+    var month = parseInt(document.getElementById('reportMonth').value) + 1;
+    var monthName = MONTH_NAMES[month];
+
+    // Schedule
+    gasCall('apiGetMonthlyReport', [year, String(month)]).then(function(report) {
+      var el = document.getElementById('report-schedule');
+      if (el) el.innerHTML = generateScheduleReport(report, monthName);
+    });
+
+    // Doc duty
+    gasCall('apiGetMonthlyReport', [year, String(month)]).then(function(report) {
+      var docBookings = report.bookings.filter(function(b) {
+        return b.shift_type === 'SHIFT_DOC_NORMAL' || b.shift_type === 'SHIFT_DOC_WEEKEND';
+      });
+      var el = document.getElementById('report-doc');
+      if (el) el.innerHTML = generateDocDutyReport(docBookings, year, monthName);
+    });
+
+    // Doc attach
+    gasCall('apiGetDocDutyAttachment', [year, String(month)]).then(function(data) {
+      var el = document.getElementById('report-doc-attach');
+      if (el) el.innerHTML = generateDocAttachReport(data, monthName);
+    });
+
+    // Payment
+    gasCall('apiGetPaymentReport', [year, String(month)]).then(function(payment) {
+      var el = document.getElementById('report-payment');
+      if (el) el.innerHTML = generatePaymentReport(payment, monthName);
+    });
+
+    // My duty
+    var el = document.getElementById('report-my-duty');
+    if (el) el.innerHTML = generateMyDutyHTML(year, month);
+  }
+
+  function generateScheduleReport(report, monthName) {
+    var html = '<div class="report-content" id="reportPrintArea">';
+    html += '<h2>ตารางเวรประจำเดือน' + monthName + ' พ.ศ. ' + report.thaiYear + '</h2>';
+    html += '<p class="report-subtitle">ห้องยาสบปราบ</p>';
+
+    html += '<table class="data-table"><thead><tr>';
+    html += '<th>วันที่</th><th>ชื่อ-สกุล</th><th>ประเภทเวร</th><th>เวลา</th><th>หมายเหตุ</th>';
+    html += '</tr></thead><tbody>';
+
+    if (report.bookings.length === 0) {
+      html += '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:20px;">ยังไม่มีข้อมูลการจองเวรในเดือนนี้</td></tr>';
+    } else {
+      // Sort by date
+      report.bookings.sort(function(a,b) { return String(a.duty_date).localeCompare(String(b.duty_date)); });
+      for (var i = 0; i < report.bookings.length; i++) {
+        var b = report.bookings[i];
+        html += '<tr>';
+        html += '<td>' + formatDateThaiStr(b.duty_date) + '</td>';
+        html += '<td>' + b.booked_by + '</td>';
+        html += '<td><span class="chip ' + (b.shift_type === 'SHIFT_NORMAL' ? 'chip-normal' : b.shift_type === 'SHIFT_WEEKEND' ? 'chip-weekend' : 'chip-doc') + '">' + b.shift_name + '</span></td>';
+        html += '<td>' + b.time_start + ' - ' + b.time_end + ' (' + b.hours + ' ชม.)</td>';
+        html += '<td>' + (b.notes || '-') + '</td>';
+        html += '</tr>';
       }
     }
 
-    async function loadHolidaysForYear(year) {
-      currentYear = parseInt(year);
-      renderHolidaysTab();
-    }
+    html += '</tbody></table>';
+    html += '<div style="margin-top:40px;display:flex;justify-content:space-between;padding:0 40px;">';
+    html += '<div style="text-align:center;"><p style="font-size:14px;margin-bottom:60px;">ผู้จัดทำ</p><p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p></div>';
+    html += '<div style="text-align:center;"><p style="font-size:14px;margin-bottom:60px;">ผู้อนุมัติ</p><p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p></div>';
+    html += '</div></div>';
+    return html;
+  }
 
-    async function renderSettingsTab() {
-      const settings = await gasCall('apiGetSettings', []);
-      const container = document.getElementById('tab-settings');
-      
-      const tokenSetting = settings.find(s => s.key === 'line_channel_access_token');
-      const groupSetting = settings.find(s => s.key === 'line_notify_group_id');
-      const orgSetting = settings.find(s => s.key === 'organization_name');
-      
-      container.innerHTML = `
-        <h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:16px;">ตั้งค่าระบบ</h3>
-        <div class="analysis-card">
-          <div class="form-group">
-            <label>ชื่อหน่วยงาน</label>
-            <input type="text" id="settingOrgName" value="${orgSetting ? orgSetting.value : 'ห้องยาสบปราบ'}">
-          </div>
-          <div class="form-group">
-            <label>LINE Channel Access Token</label>
-            <input type="text" id="settingToken" value="${tokenSetting ? tokenSetting.value : ''}" placeholder="วาง Token ที่นี่">
-          </div>
-          <div class="form-group">
-            <label>LINE Target ID (Group ID หรือ User ID)</label>
-            <input type="text" id="settingGroupId" value="${groupSetting ? groupSetting.value : ''}" placeholder="Rxxxx หรือ Uxxxx">
-          </div>
-          <button class="btn btn-primary" onclick="saveSettings()">บันทึกการตั้งค่า</button>
-        </div>
-      `;
-    }
+  function generateDocDutyReport(bookings, year, monthName) {
+    var html = '<div class="report-content">';
+    html += '<h2>ตารางเวรเอกสาร ประจำเดือน' + monthName + ' พ.ศ. ' + year + '</h2>';
+    html += '<p class="report-subtitle">ห้องยาสบปราบ</p>';
 
-    async function saveSettings() {
-      await gasCall('apiUpdateSetting', ['organization_name', document.getElementById('settingOrgName').value]);
-      await gasCall('apiUpdateSetting', ['line_channel_access_token', document.getElementById('settingToken').value]);
-      await gasCall('apiUpdateSetting', ['line_notify_group_id', document.getElementById('settingGroupId').value]);
-      showToast('บันทึกการตั้งค่าแล้ว');
-    }
+    html += '<table class="data-table"><thead><tr>';
+    html += '<th>วันที่</th><th>ชื่อ-สกุล</th><th>เวลาปฏิบัติงาน</th><th>รายละเอียดการปฏิบัติงาน</th>';
+    html += '</tr></thead><tbody>';
 
-    // ============ REPORTS PAGE ============
-    async function renderReportsPage() {
-      const main = document.getElementById('mainContent');
-      const monthNames = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-      
-      main.innerHTML = `
-        <div class="page-header">
-          <h2>📊 รายงาน</h2>
-          <p>สร้างรายงานตามรูปแบบราชการไทย</p>
-        </div>
-        
-        <div class="report-selector">
-          <select id="reportYear" onchange="loadReport()">
-            ${[2567,2568,2569].map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>พ.ศ. ${y}</option>`).join('')}
-          </select>
-          <select id="reportMonth" onchange="loadReport()">
-            ${monthNames.map((m, i) => `<option value="${i}" ${i === currentMonth - 1 ? 'selected' : ''}>${m || ''}</option>`).join('')}
-          </select>
-        </div>
-        
-        <div class="tabs" id="reportTabs">
-          <div class="tab active" onclick="switchReportTab('report-schedule')">ตารางเวรประจำเดือน</div>
-          <div class="tab" onclick="switchReportTab('report-doc')">ตารางเวรเอกสาร</div>
-          <div class="tab" onclick="switchReportTab('report-doc-attach')">เอกสารแนบเวรเอกสาร</div>
-          <div class="tab" onclick="switchReportTab('report-payment')">หลักฐานการจ่ายเงิน</div>
-          <div class="tab" onclick="switchReportTab('report-my-duty')">เวรฉันวันไหน</div>
-        </div>
-        
-        <div id="report-schedule" class="tab-content active"></div>
-        <div id="report-doc" class="tab-content"></div>
-        <div id="report-doc-attach" class="tab-content"></div>
-        <div id="report-payment" class="tab-content"></div>
-        <div id="report-my-duty" class="tab-content"></div>
-        
-        <div style="margin-top:16px;text-align:right;">
-          <button class="btn btn-primary" onclick="printReport()">🖨️ พิมพ์ / บันทึก PDF</button>
-        </div>
-      `;
-      
-      loadReport();
-    }
-
-    function switchReportTab(tabId) {
-      document.querySelectorAll('#reportTabs .tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('#reportTabs ~ .tab-content').forEach(c => c.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
-    }
-
-    async function loadReport() {
-      const year = document.getElementById('reportYear').value;
-      const month = parseInt(document.getElementById('reportMonth').value) + 1;
-      
-      const monthNames = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-      
-      // Schedule Report
-      const report = await gasCall('apiGetMonthlyReport', [year, String(month)]);
-      const scheduleContent = document.getElementById('report-schedule');
-      if (scheduleContent) {
-        scheduleContent.innerHTML = generateScheduleReport(report, monthNames[month]);
-      }
-      
-      // Doc Duty Report
-      const docBookings = report.bookings.filter(b => b.shift_type && (b.shift_type.indexOf('เวรเอกสาร') !== -1));
-      const docContent = document.getElementById('report-doc');
-      if (docContent) {
-        docContent.innerHTML = generateDocDutyReport(docBookings, year, monthNames[month]);
-      }
-      
-      // Doc Attach Report
-      const attachContent = document.getElementById('report-doc-attach');
-      if (attachContent) {
-        attachContent.innerHTML = `<div class="analysis-card"><p style="color:var(--text-light);text-align:center;padding:20px;">ใช้ข้อมูลจากการวิเคราะห์ข้อมูล (เมนูที่ 4) เพื่อสร้างเอกสารแนบเวรเอกสาร<br><br><button class="btn btn-secondary btn-sm" onclick="navigateTo('analysis')">ไปที่วิเคราะห์ข้อมูล</button></p></div>`;
-      }
-      
-      // Payment Report
-      const payment = await gasCall('apiGetPaymentReport', [year, String(month)]);
-      const paymentContent = document.getElementById('report-payment');
-      if (paymentContent) {
-        paymentContent.innerHTML = generatePaymentReport(payment, monthNames[month]);
-      }
-      
-      // My Duty Report
-      const myDutyContent = document.getElementById('report-my-duty');
-      if (myDutyContent) {
-        myDutyContent.innerHTML = generateMyDutyHTML(year, month);
+    if (bookings.length === 0) {
+      html += '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:20px;">ยังไม่มีข้อมูลเวรเอกสาร</td></tr>';
+    } else {
+      bookings.sort(function(a,b) { return String(a.duty_date).localeCompare(String(b.duty_date)); });
+      for (var i = 0; i < bookings.length; i++) {
+        var b = bookings[i];
+        html += '<tr>';
+        html += '<td>' + formatDateThaiStr(b.duty_date) + '</td>';
+        html += '<td>' + b.booked_by + '</td>';
+        html += '<td>' + b.time_start + ' - ' + b.time_end + ' (' + b.hours + ' ชม.)</td>';
+        html += '<td>ดูจากเมนูวิเคราะห์ข้อมูล</td>';
+        html += '</tr>';
       }
     }
 
-    function generateScheduleReport(report, monthName) {
-      return `
-        <div class="report-content" id="reportPrintArea">
-          <div style="text-align:center;margin-bottom:24px;">
-            <h2 style="font-size:20px;margin-bottom:4px;">ตารางเวรประจำเดือน${monthName} พ.ศ. ${report.thaiYear}</h2>
-            <p style="font-size:14px;color:var(--text-light);">ห้องยาสบปราบ</p>
-          </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>วันที่</th>
-                <th>ชื่อ-สกุล</th>
-                <th>ประเภทเวร</th>
-                <th>เวลา</th>
-                <th>หมายเหตุ</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${report.bookings.length === 0 ? '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:20px;">ยังไม่มีข้อมูลการจองเวรในเดือนนี้</td></tr>' :
-              report.bookings.map(b => `
-                <tr>
-                  <td>${formatDateThaiStr(b.duty_date)}</td>
-                  <td>${b.booked_by}</td>
-                  <td>${b.shift_name}</td>
-                  <td>${b.time_start}-${b.time_end}</td>
-                  <td>${b.notes || '-'}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-          <div style="margin-top:40px;display:flex;justify-content:space-between;">
-            <div style="text-align:center;">
-              <p style="font-size:14px;margin-bottom:60px;">ผู้จัดทำ</p>
-              <p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p>
-            </div>
-            <div style="text-align:center;">
-              <p style="font-size:14px;margin-bottom:60px;">ผู้อนุมัติ</p>
-              <p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p>
-            </div>
-          </div>
-        </div>
-      `;
+    html += '</tbody></table></div>';
+    return html;
+  }
+
+  function generateDocAttachReport(data, monthName) {
+    var html = '<div class="report-content">';
+    html += '<h2>เอกสารแนบเวรเอกสาร เดือน' + monthName + ' พ.ศ. ' + data.thaiYear + '</h2>';
+    html += '<p class="report-subtitle">ห้องยาสบปราบ | จำนวนโครงการทั้งหมด: ' + data.total_projects_available + ' โครงการ</p>';
+
+    if (data.users.length === 0) {
+      html += '<div class="empty-state"><span class="material-icons-round">analytics</span><p>ไม่มีบุคคลอยู่เวรเอกสารในเดือนนี้</p></div>';
+      html += '</div>';
+      return html;
     }
 
-    function generateDocDutyReport(bookings, year, monthName) {
-      return `
-        <div class="report-content" id="reportPrintArea">
-          <div style="text-align:center;margin-bottom:24px;">
-            <h2 style="font-size:20px;margin-bottom:4px;">ตารางเวรเอกสาร ประจำเดือน${monthName} พ.ศ. ${year}</h2>
-            <p style="font-size:14px;color:var(--text-light);">ห้องยาสบปราบ</p>
-          </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>วันที่</th>
-                <th>ชื่อ-สกุล</th>
-                <th>เวลาปฏิบัติงาน</th>
-                <th>รายละเอียดการปฏิบัติงาน</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${bookings.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:20px;">ยังไม่มีข้อมูลเวรเอกสาร</td></tr>' :
-              bookings.map(b => `
-                <tr>
-                  <td>${formatDateThaiStr(b.duty_date)}</td>
-                  <td>${b.booked_by}</td>
-                  <td>${b.time_start}-${b.time_end} (${b.hours} ชม.)</td>
-                  <td>ดูจากเมนูวิเคราะห์ข้อมูล</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
+    for (var ui = 0; ui < data.users.length; ui++) {
+      var user = data.users[ui];
+      html += '<div style="margin-top:24px;padding-top:24px;border-top:2px solid var(--border);">';
+      html += '<h3 style="font-size:16px;font-weight:700;color:var(--primary);margin-bottom:12px;">👤 ' + user.booked_by + ' (' + user.total_days + ' วัน)</h3>';
+
+      html += '<table class="data-table"><thead><tr>';
+      html += '<th>วันที่ (ว/ด/ปี พ.ศ.)</th><th>เวลาปฏิบัติงาน</th><th>รายละเอียดการปฏิบัติงาน (เลขโครงการ)</th><th>ผลงาน</th>';
+      html += '</tr></thead><tbody>';
+
+      for (var di = 0; di < user.day_details.length; di++) {
+        var d = user.day_details[di];
+        html += '<tr>';
+        html += '<td>' + d.dateThai + '</td>';
+        html += '<td>' + d.time_start + ' - ' + d.time_end + ' (' + d.hours + ' ชม.)</td>';
+        html += '<td>';
+        if (d.projects.length > 0) {
+          for (var pi = 0; pi < d.projects.length; pi++) {
+            html += '<span style="display:inline-block;background:var(--bg);padding:2px 8px;border-radius:4px;margin:2px;font-size:12px;">' + d.projects[pi] + '</span>';
+          }
+        } else {
+          html += '-';
+        }
+        html += '</td>';
+        html += '<td style="text-align:center;font-weight:600;">' + d.project_count + ' โครงการ</td>';
+        html += '</tr>';
+      }
+
+      html += '<tr style="font-weight:600;background:#f0f7ff;">';
+      html += '<td>รวม</td>';
+      html += '<td>' + user.total_hours + ' ชม.</td>';
+      html += '<td>' + user.total_projects + ' โครงการ</td>';
+      html += '<td></td>';
+      html += '</tr></tbody></table>';
+      html += '</div>';
     }
 
-    function generatePaymentReport(payment, monthName) {
-      const totalPayment = payment.summary.reduce((sum, s) => sum + s.total_payment, 0);
-      
-      return `
-        <div class="report-content" id="reportPrintArea">
-          <div style="text-align:center;margin-bottom:24px;">
-            <h2 style="font-size:20px;margin-bottom:4px;">หลักฐานการจ่ายเงินค่าตอบแทนเวร</h2>
-            <p style="font-size:14px;color:var(--text-light);">เดือน${monthName} พ.ศ. ${payment.thaiYear} — ห้องยาสบปราบ</p>
-          </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>ชื่อ-สกุล</th>
-                <th>จำนวนวัน</th>
-                <th>ชั่วโมงรวม</th>
-                <th>เงินรวม (บาท)</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${payment.summary.map(s => `
-                <tr>
-                  <td>${s.booked_by}</td>
-                  <td>${s.days}</td>
-                  <td>${s.total_hours}</td>
-                  <td style="text-align:right;">${s.total_payment.toFixed(2)}</td>
-                </tr>
-              `).join('')}
-              <tr style="font-weight:600;background:#f0f7ff;">
-                <td>รวม</td>
-                <td>${payment.summary.reduce((s, r) => s + r.days, 0)}</td>
-                <td>${payment.summary.reduce((s, r) => s + r.total_hours, 0)}</td>
-                <td style="text-align:right;">${totalPayment.toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div style="margin-top:40px;display:flex;justify-content:space-between;">
-            <div style="text-align:center;">
-              <p style="font-size:14px;margin-bottom:60px;">ผู้จ่ายเงิน</p>
-              <p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p>
-            </div>
-            <div style="text-align:center;">
-              <p style="font-size:14px;margin-bottom:60px;">ผู้รับเงิน</p>
-              <p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p>
-            </div>
-          </div>
-        </div>
-      `;
+    html += '</div>';
+    return html;
+  }
+
+  function generatePaymentReport(payment, monthName) {
+    var totalPayment = 0;
+    var totalDays = 0;
+    var totalHours = 0;
+
+    for (var i = 0; i < payment.summary.length; i++) {
+      totalPayment += payment.summary[i].total_payment;
+      totalDays += payment.summary[i].normal_days + payment.summary[i].weekend_days + payment.summary[i].doc_normal_days + payment.summary[i].doc_weekend_days;
+      totalHours += payment.summary[i].total_hours;
     }
 
-    async function generateMyDutyHTML(year, month) {
-      const users = await gasCall('apiGetUsers', []);
-      const container = document.getElementById('report-my-duty');
-      
-      let html = `
-        <div class="report-content">
-          <div style="margin-bottom:16px;">
-            <label style="font-size:14px;font-weight:500;">เลือกบุคลากร:</label>
-            <select id="myDutyUserSelect" onchange="loadMyDutyData()" style="padding:8px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Sarabun';margin-left:8px;">
-              <option value="${currentUser.user_id}">—ของฉัน—</option>
-              ${users.map(u => `<option value="${u.user_id}">${u.fullname}</option>`).join('')}
-            </select>
-          </div>
-          <div id="myDutyResult"></div>
-        </div>
-      `;
+    var html = '<div class="report-content">';
+    html += '<h2>หลักฐานการจ่ายเงินค่าตอบแทนเวร</h2>';
+    html += '<p class="report-subtitle">เดือน' + monthName + ' พ.ศ. ' + payment.thaiYear + ' — ห้องยาสบปราบ</p>';
+
+    html += '<table class="data-table"><thead><tr>';
+    html += '<th>ชื่อ-สกุล</th><th>เวรวันปกติ</th><th>เวรวันหยุด</th><th>เวรเอกสาร(ปกติ)</th><th>เวรเอกสาร(วันหยุด)</th><th>ชั่วโมงรวม</th><th>เงินรวม (บาท)</th>';
+    html += '</tr></thead><tbody>';
+
+    for (var i = 0; i < payment.summary.length; i++) {
+      var s = payment.summary[i];
+      var dayCount = s.normal_days + s.weekend_days + s.doc_normal_days + s.doc_weekend_days;
+      html += '<tr>';
+      html += '<td>' + s.booked_by + '</td>';
+      html += '<td>' + s.normal_days + '</td>';
+      html += '<td>' + s.weekend_days + '</td>';
+      html += '<td>' + s.doc_normal_days + '</td>';
+      html += '<td>' + s.doc_weekend_days + '</td>';
+      html += '<td>' + s.total_hours + '</td>';
+      html += '<td style="text-align:right;font-weight:600;">' + s.total_payment.toFixed(2) + '</td>';
+      html += '</tr>';
+    }
+
+    html += '<tr style="font-weight:700;background:#f0f7ff;">';
+    html += '<td>รวม</td>';
+    html += '<td>' + payment.summary.reduce(function(s,r){return s+r.normal_days;},0) + '</td>';
+    html += '<td>' + payment.summary.reduce(function(s,r){return s+r.weekend_days;},0) + '</td>';
+    html += '<td>' + payment.summary.reduce(function(s,r){return s+r.doc_normal_days;},0) + '</td>';
+    html += '<td>' + payment.summary.reduce(function(s,r){return s+r.doc_weekend_days;},0) + '</td>';
+    html += '<td>' + totalHours + '</td>';
+    html += '<td style="text-align:right;">' + totalPayment.toFixed(2) + '</td>';
+    html += '</tr></tbody></table>';
+
+    html += '<div style="margin-top:40px;display:flex;justify-content:space-between;padding:0 40px;">';
+    html += '<div style="text-align:center;"><p style="font-size:14px;margin-bottom:60px;">ผู้จ่ายเงิน</p><p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p></div>';
+    html += '<div style="text-align:center;"><p style="font-size:14px;margin-bottom:60px;">ผู้รับเงิน</p><p style="border-top:1px solid var(--text);padding-top:4px;">___________________</p></div>';
+    html += '</div></div>';
+    return html;
+  }
+
+  function generateMyDutyHTML(year, month) {
+    gasCall('apiGetUsers', []).then(function(users) {
+      var container = document.getElementById('report-my-duty');
+      if (!container) return;
+
+      var html = '<div style="margin-bottom:16px;">';
+      html += '<label style="font-size:14px;font-weight:500;">เลือกบุคลากร:</label> ';
+      html += '<select id="myDutyUserSelect" onchange="loadMyDutyData()" style="padding:8px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:\'Sarabun\';margin-left:8px;">';
+      html += '<option value="' + currentUser.user_id + '">—ของฉัน—</option>';
+      for (var i = 0; i < users.length; i++) {
+        html += '<option value="' + users[i].user_id + '">' + users[i].fullname + '</option>';
+      }
+      html += '</select></div>';
+      html += '<div id="myDutyResult"></div>';
+
       container.innerHTML = html;
       loadMyDutyData();
-    }
+    });
+    return '<div class="loading"><div class="spinner"></div> กำลังโหลด...</div>';
+  }
 
-    async function loadMyDutyData() {
-      const userId = document.getElementById('myDutyUserSelect').value;
-      const year = document.getElementById('reportYear').value;
-      const month = parseInt(document.getElementById('reportMonth').value) + 1;
-      
-      const data = await gasCall('apiGetMyDuty', [userId, year, String(month)]);
-      const result = document.getElementById('myDutyResult');
-      
-      const monthNames = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-      
-      const shiftLabels = {
-        'SHIFT_NORMAL': 'เวรวันปกติ',
-        'SHIFT_WEEKEND': 'เวรเสาร์-อาทิตย์/นักขัตฤกษ์',
-        'SHIFT_DOC_NORMAL': 'เวรเอกสาร (วันปกติ)',
-        'SHIFT_DOC_WEEKEND': 'เวรเอกสาร (วันหยุด)'
-      };
-      
-      result.innerHTML = `
-        <h3 style="font-size:16px;font-weight:600;color:var(--primary);margin-bottom:16px;">
-          สรุปเวรของ ${data.bookings[0]?.booked_by || ''} — เดือน${monthNames[month]} พ.ศ. ${year}
-        </h3>
-        
-        <div class="calendar-summary" style="margin-bottom:20px;">
-          <div class="summary-card"><div><div class="num">${data.total_days}</div><div class="label">วันทั้งหมด</div></div></div>
-          <div class="summary-card working"><div><div class="num">${data.normal_days.length + data.doc_normal_days.length}</div><div class="label">เวรวันปกติ</div></div></div>
-          <div class="summary-card weekend"><div><div class="num">${data.weekend_days.length + data.doc_weekend_days.length}</div><div class="label">เวรวันหยุด</div></div></div>
-        </div>
-        
-        <table class="data-table" style="margin-bottom:20px;">
-          <thead>
-            <tr><th>วันที่</th><th>ประเภทเวร</th><th>ชั่วโมง</th></tr>
-          </thead>
-          <tbody>
-            ${data.bookings.map(b => `
-              <tr>
-                <td>${formatDateThaiStr(b.duty_date)}</td>
-                <td>${b.shift_name}</td>
-                <td>${b.hours} ชม.</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
-          <div class="analysis-card">
-            <h3>เวรวันปกติ</h3>
-            <p style="font-size:14px;color:var(--text-light);">
-              ${data.normal_days.length > 0 ? data.normal_days.map(d => formatDateThaiStr(d)).join(', ') : '-'}
-            </p>
-          </div>
-          <div class="analysis-card">
-            <h3>เวรเสาร์-อาทิตย์/นักขัตฤกษ์</h3>
-            <p style="font-size:14px;color:var(--text-light);">
-              ${data.weekend_days.length > 0 ? data.weekend_days.map(d => formatDateThaiStr(d)).join(', ') : '-'}
-            </p>
-          </div>
-          <div class="analysis-card">
-            <h3>เวรเอกสาร (วันปกติ)</h3>
-            <p style="font-size:14px;color:var(--text-light);">
-              ${data.doc_normal_days.length > 0 ? data.doc_normal_days.map(d => formatDateThaiStr(d)).join(', ') : '-'}
-            </p>
-          </div>
-          <div class="analysis-card">
-            <h3>เวรเอกสาร (วันหยุด)</h3>
-            <p style="font-size:14px;color:var(--text-light);">
-              ${data.doc_weekend_days.length > 0 ? data.doc_weekend_days.map(d => formatDateThaiStr(d)).join(', ') : '-'}
-            </p>
-          </div>
-        </div>
-      `;
-    }
+  function loadMyDutyData() {
+    var userId = document.getElementById('myDutyUserSelect').value;
+    var year = document.getElementById('reportYear').value;
+    var month = parseInt(document.getElementById('reportMonth').value) + 1;
+    var monthName = MONTH_NAMES[month];
 
-    function formatDateThaiStr(dateVal) {
-      if (!dateVal) return '-';
-      const d = new Date(dateVal);
-      if (isNaN(d)) return String(dateVal);
-      const day = d.getDate();
-      const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-      return day + ' ' + months[d.getMonth()] + ' ' + (d.getFullYear() + 543);
-    }
+    gasCall('apiGetMyDuty', [userId, year, String(month)]).then(function(data) {
+      var result = document.getElementById('myDutyResult');
+      if (!result) return;
 
-    function printReport() {
-      window.print();
-    }
+      var userName = currentUser.fullname;
+      // Try to find user name from bookings
+      if (data.bookings.length > 0 && data.bookings[0].booked_by) {
+        userName = data.bookings[0].booked_by;
+      }
 
-    // ============ ANALYSIS PAGE ============
-    async function renderAnalysisPage() {
-      const main = document.getElementById('mainContent');
-      const monthNames = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-      
-      main.innerHTML = `
-        <div class="page-header">
-          <h2>📈 วิเคราะห์ข้อมูล</h2>
-          <p>วิเคราะห์เวรเอกสารและกระจายงานโครงการ</p>
-        </div>
-        
-        <div class="analysis-card">
-          <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-            <div class="form-group" style="margin:0;flex:1;min-width:150px;">
-              <label>เดือน</label>
-              <select id="analysisMonth" onchange="loadAnalysisUsers()">
-                ${monthNames.map((m, i) => `<option value="${i}" ${i === currentMonth - 1 ? 'selected' : ''}>${m || ''}</option>`).join('')}
-              </select>
-            </div>
-            <div class="form-group" style="margin:0;flex:1;min-width:150px;">
-              <label>ปี (พ.ศ.)</label>
-              <select id="analysisYear" onchange="loadAnalysisUsers()">
-                ${[2567,2568,2569].map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`).join('')}
-              </select>
-            </div>
-            <div class="form-group" style="margin:0;flex:2;min-width:200px;">
-              <label>เลือกบุคคล (อยู่เวรเอกสาร)</label>
-              <select id="analysisUser" onchange="loadAnalysisData()">
-                <option value="">-- เลือกบุคคล --</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        
-        <div id="analysisResult">
-          <div class="empty-state">
-            <span class="material-icons-round">analytics</span>
-            <p>เลือกเดือน/ปี และบุคคลเพื่อดูผลการวิเคราะห์</p>
-          </div>
-        </div>
-      `;
-      
-      loadAnalysisUsers();
-    }
+      var html = '<h3 style="font-size:16px;font-weight:700;color:var(--primary);margin-bottom:16px;">';
+      html += 'สรุปเวรของ ' + userName + ' — เดือน' + monthName + ' พ.ศ. ' + year + '</h3>';
 
-    async function loadAnalysisUsers() {
-      const year = document.getElementById('analysisYear').value;
-      const month = parseInt(document.getElementById('analysisMonth').value) + 1;
-      
-      const users = await gasCall('apiGetDocDutyUsers', [year, String(month)]);
-      const sel = document.getElementById('analysisUser');
-      
+      html += '<div class="calendar-summary" style="margin-bottom:20px;">';
+      html += '<div class="summary-card"><div><div class="num">' + data.total_days + '</div><div class="label">วันทั้งหมด</div></div></div>';
+      html += '<div class="summary-card working"><div><div class="num">' + (data.normal_days.length + data.doc_normal_days.length) + '</div><div class="label">เวรวันปกติ</div></div></div>';
+      html += '<div class="summary-card weekend"><div><div class="num">' + (data.weekend_days.length + data.doc_weekend_days.length) + '</div><div class="label">เวรวันหยุด</div></div></div>';
+      html += '</div>';
+
+      // Detail table
+      if (data.bookings.length > 0) {
+        data.bookings.sort(function(a,b) { return String(a.duty_date).localeCompare(String(b.duty_date)); });
+        html += '<table class="data-table" style="margin-bottom:20px;"><thead><tr><th>วันที่</th><th>ประเภทเวร</th><th>เวลา</th><th>ชั่วโมง</th></tr></thead><tbody>';
+        for (var i = 0; i < data.bookings.length; i++) {
+          var b = data.bookings[i];
+          html += '<tr>';
+          html += '<td>' + formatDateThaiStr(b.duty_date) + '</td>';
+          html += '<td><span class="chip ' + (b.shift_type === 'SHIFT_NORMAL' ? 'chip-normal' : b.shift_type === 'SHIFT_WEEKEND' ? 'chip-weekend' : 'chip-doc') + '">' + b.shift_name + '</span></td>';
+          html += '<td>' + b.time_start + ' - ' + b.time_end + '</td>';
+          html += '<td>' + b.hours + ' ชม.</td>';
+          html += '</tr>';
+        }
+        html += '</tbody></table>';
+      }
+
+      // Summary sections
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">';
+
+      html += '<div class="analysis-card"><h3>เวรวันปกติ (' + data.normal_days.length + ' วัน)</h3>';
+      html += '<p style="font-size:14px;color:var(--text-light);">';
+      if (data.normal_days.length > 0) {
+        for (var i = 0; i < data.normal_days.length; i++) {
+          html += formatDateThaiStr(data.normal_days[i].duty_date) + '<br>';
+        }
+      } else { html += '-'; }
+      html += '</p></div>';
+
+      html += '<div class="analysis-card"><h3>เวรเสาร์-อาทิตย์/นักขัตฤกษ์ (' + data.weekend_days.length + ' วัน)</h3>';
+      html += '<p style="font-size:14px;color:var(--text-light);">';
+      if (data.weekend_days.length > 0) {
+        for (var i = 0; i < data.weekend_days.length; i++) {
+          html += formatDateThaiStr(data.weekend_days[i].duty_date) + '<br>';
+        }
+      } else { html += '-'; }
+      html += '</p></div>';
+
+      html += '<div class="analysis-card"><h3>เวรเอกสาร วันปกติ (' + data.doc_normal_days.length + ' วัน)</h3>';
+      html += '<p style="font-size:14px;color:var(--text-light);">';
+      if (data.doc_normal_days.length > 0) {
+        for (var i = 0; i < data.doc_normal_days.length; i++) {
+          html += formatDateThaiStr(data.doc_normal_days[i].duty_date) + '<br>';
+        }
+      } else { html += '-'; }
+      html += '</p></div>';
+
+      html += '<div class="analysis-card"><h3>เวรเอกสาร วันหยุด (' + data.doc_weekend_days.length + ' วัน)</h3>';
+      html += '<p style="font-size:14px;color:var(--text-light);">';
+      if (data.doc_weekend_days.length > 0) {
+        for (var i = 0; i < data.doc_weekend_days.length; i++) {
+          html += formatDateThaiStr(data.doc_weekend_days[i].duty_date) + '<br>';
+        }
+      } else { html += '-'; }
+      html += '</p></div>';
+
+      html += '</div>';
+      result.innerHTML = html;
+    });
+  }
+
+  // ============ ANALYSIS PAGE ============
+  function renderAnalysisPage() {
+    var html = '<div class="page-header"><h2>วิเคราะห์ข้อมูล</h2><p>วิเคราะห์เวรเอกสารและกระจายงานโครงการ</p></div>';
+
+    html += '<div class="analysis-card">';
+    html += '<div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">';
+
+    html += '<div class="form-group" style="margin:0;flex:1;min-width:150px;">';
+    html += '<label>เดือน</label><select id="analysisMonth" onchange="loadAnalysisUsers()">';
+    for (var i = 0; i <= 12; i++) {
+      html += '<option value="' + i + '"' + (i === currentMonth - 1 ? ' selected' : '') + '>' + MONTH_NAMES[i] + '</option>';
+    }
+    html += '</select></div>';
+
+    html += '<div class="form-group" style="margin:0;flex:1;min-width:150px;">';
+    html += '<label>ปี (พ.ศ.)</label><select id="analysisYear" onchange="loadAnalysisUsers()">';
+    [2567,2568,2569,2570,2571].forEach(function(y) {
+      html += '<option value="' + y + '"' + (y === currentYear ? ' selected' : '') + '>' + y + '</option>';
+    });
+    html += '</select></div>';
+
+    html += '<div class="form-group" style="margin:0;flex:2;min-width:200px;">';
+    html += '<label>เลือกบุคคล (อยู่เวรเอกสาร)</label>';
+    html += '<select id="analysisUser" onchange="loadAnalysisData()">';
+    html += '<option value="">-- เลือกบุคคล --</option>';
+    html += '</select></div>';
+
+    html += '</div></div>';
+    html += '<div id="analysisResult">';
+    html += '<div class="empty-state"><span class="material-icons-round">analytics</span><p>เลือกเดือน/ปี และบุคคลเพื่อดูผลการวิเคราะห์</p></div>';
+    html += '</div>';
+
+    document.getElementById('mainContent').innerHTML = html;
+    loadAnalysisUsers();
+  }
+
+  function loadAnalysisUsers() {
+    var year = document.getElementById('analysisYear').value;
+    var month = parseInt(document.getElementById('analysisMonth').value) + 1;
+
+    gasCall('apiGetDocDutyUsers', [year, String(month)]).then(function(users) {
+      var sel = document.getElementById('analysisUser');
+      if (!sel) return;
+
       if (users.length === 0) {
         sel.innerHTML = '<option value="">-- ไม่มีบุคคลอยู่เวรเอกสาร --</option>';
         return;
       }
-      
-      sel.innerHTML = '<option value="">-- เลือกบุคคล --</option>' + 
-        users.map(u => `<option value="${u.user_id}">${u.booked_by} (${u.dates.length} วัน)</option>`).join('');
-    }
 
-    async function loadAnalysisData() {
-      const userId = document.getElementById('analysisUser').value;
-      if (!userId) {
-        document.getElementById('analysisResult').innerHTML = `
-          <div class="empty-state">
-            <span class="material-icons-round">analytics</span>
-            <p>เลือกบุคคลเพื่อดูผลการวิเคราะห์</p>
-          </div>
-        `;
-        return;
+      sel.innerHTML = '<option value="">-- เลือกบุคคล --</option>';
+      for (var i = 0; i < users.length; i++) {
+        sel.innerHTML += '<option value="' + users[i].user_id + '">' + users[i].booked_by + ' (' + users[i].dates.length + ' วัน)</option>';
       }
-      
-      const year = document.getElementById('analysisYear').value;
-      const month = parseInt(document.getElementById('analysisMonth').value) + 1;
-      
-      document.getElementById('analysisResult').innerHTML = '<div class="loading"><div class="spinner"></div> กำลังวิเคราะห์...</div>';
-      
-      const data = await gasCall('apiAnalyzeDocDuty', [userId, year, String(month)]);
-      
-      const result = document.getElementById('analysisResult');
-      result.innerHTML = `
-        <div class="analysis-card">
-          <h3>ผลการวิเคราะห์ — กระจายงานโครงการ</h3>
-          <p style="color:var(--text-light);font-size:14px;margin-bottom:16px;">
-            โครงการทั้งหมด: ${data.total_projects} โครงการ | กระจาย: ${data.projects_per_day} โครงการ/วัน
-          </p>
-          
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>วันที่ (ว/ด/ปี พ.ศ.)</th>
-                <th>เวลาปฏิบัติงาน</th>
-                <th>รายละเอียดการปฏิบัติงาน (เลขโครงการ)</th>
-                <th>ผลงาน (จำนวนโครงการ)</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.dates.length === 0 ? '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:20px;">ไม่มีข้อมูล</td></tr>' :
-              data.dates.map(d => `
-                <tr>
-                  <td>${d.dateThai}</td>
-                  <td>${d.time_start}-${d.time_end} (${d.hours} ชม.)</td>
-                  <td>${d.projects.length > 0 ? d.projects.map(p => `<span style="display:inline-block;background:var(--bg);padding:2px 8px;border-radius:4px;margin:2px;font-size:13px;">${p}</span>`).join(' ') : '-'}</td>
-                  <td style="text-align:center;font-weight:600;">${d.project_count}</td>
-                </tr>
-              `).join('')}
-              <tr style="font-weight:600;background:#f0f7ff;">
-                <td>รวม</td>
-                <td>${data.dates.reduce((s, d) => s + d.hours, 0)} ชม.</td>
-                <td>${data.dates.reduce((s, d) => s + d.project_count, 0)} โครงการ</td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        <div style="margin-top:16px;text-align:right;">
-          <button class="btn btn-primary" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
-        </div>
-      `;
+    });
+  }
+
+  function loadAnalysisData() {
+    var userId = document.getElementById('analysisUser').value;
+    if (!userId) {
+      document.getElementById('analysisResult').innerHTML =
+        '<div class="empty-state"><span class="material-icons-round">analytics</span><p>เลือกบุคคลเพื่อดูผลการวิเคราะห์</p></div>';
+      return;
     }
 
-    // ============ INIT ============
-    // Auto-focus login
-    document.getElementById('loginName').focus();
+    var year = document.getElementById('analysisYear').value;
+    var month = parseInt(document.getElementById('analysisMonth').value) + 1;
 
-    // Close modal on overlay click
-    document.getElementById('bookingModal').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
+    document.getElementById('analysisResult').innerHTML = '<div class="loading"><div class="spinner"></div> กำลังวิเคราะห์...</div>';
 
-    // Keyboard shortcut
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeModal();
+    gasCall('apiAnalyzeDocDuty', [userId, year, String(month)]).then(function(data) {
+      var html = '<div class="analysis-card">';
+      html += '<h3>ผลการวิเคราะห์ — กระจายงานโครงการ</h3>';
+      html += '<p style="color:var(--text-light);font-size:14px;margin-bottom:16px;">';
+      html += 'โครงการทั้งหมด: ' + data.total_projects + ' โครงการ | กระจาย: ' + data.projects_per_day + ' โครงการ/วัน | ';
+      html += 'ชั่วโมงรวม: ' + data.total_hours + ' ชม.</p>';
+
+      if (data.dates.length === 0) {
+        html += '<div class="empty-state"><span class="material-icons-round">info</span><p>ไม่มีข้อมูล</p></div>';
+      } else {
+        html += '<table class="data-table"><thead><tr>';
+        html += '<th>วันที่ (ว/ด/ปี พ.ศ.)</th><th>วัน</th><th>เวลาปฏิบัติงาน</th><th>รายละเอียดการปฏิบัติงาน (เลขโครงการ)</th><th>ผลงาน</th>';
+        html += '</tr></thead><tbody>';
+
+        for (var i = 0; i < data.dates.length; i++) {
+          var d = data.dates[i];
+          html += '<tr>';
+          html += '<td>' + d.dateThai + '</td>';
+          html += '<td>' + d.dayOfWeek + '</td>';
+          html += '<td>' + d.time_start + ' - ' + d.time_end + ' (' + d.hours + ' ชม.)</td>';
+          html += '<td>';
+          if (d.projects.length > 0) {
+            for (var pi = 0; pi < d.projects.length; pi++) {
+              html += '<span style="display:inline-block;background:var(--bg);padding:2px 8px;border-radius:4px;margin:2px;font-size:12px;">' + d.projects[pi] + '</span>';
+            }
+          } else {
+            html += '-';
+          }
+          html += '</td>';
+          html += '<td style="text-align:center;font-weight:600;">' + d.project_count + ' โครงการ</td>';
+          html += '</tr>';
+        }
+
+        html += '<tr style="font-weight:700;background:#f0f7ff;">';
+        html += '<td>รวม</td><td></td>';
+        html += '<td>' + data.total_hours + ' ชม.</td>';
+        html += '<td>' + data.total_project_work + ' โครงการ</td>';
+        html += '<td></td>';
+        html += '</tr></tbody></table>';
+      }
+
+      html += '</div>';
+      html += '<div style="margin-top:16px;text-align:right;">';
+      html += '<button class="btn btn-primary" onclick="window.print()"><span class="material-icons-round" style="font-size:18px;vertical-align:middle;">print</span> พิมพ์รายงาน</button>';
+      html += '</div>';
+
+      document.getElementById('analysisResult').innerHTML = html;
+    }).catch(function(err) {
+      document.getElementById('analysisResult').innerHTML =
+        '<div class="empty-state"><span class="material-icons-round">error</span><p>เกิดข้อผิดพลาด: ' + err.message + '</p></div>';
     });
+  }
+
+  // ============ INIT ============
+  document.getElementById('loginName').focus();
+
+  document.getElementById('bookingModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Enter key on login
+  document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+  });
   </script>
 </body>
 </html>
